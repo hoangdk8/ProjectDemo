@@ -1,9 +1,8 @@
-package com.example.projectdemo.home.adapter
+package com.example.projectdemo.explore.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.R
 import com.example.projectdemo.databinding.ItemAdBinding
@@ -13,10 +12,9 @@ import com.example.projectdemo.dataclass.DataDefaultRings
 import com.example.projectdemo.home.interfa.OnItemClickListener
 import com.example.projectdemo.untils.convertDurationToTimeString
 
-
-class HomeAdapter(
-    private val itemList: List<Any>,
-    private val listener: OnItemClickListener
+class DetailCategoriesAdapter(
+private val itemList: List<Any>,
+private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var hour: String = "00"
     private var minute: String = "00"

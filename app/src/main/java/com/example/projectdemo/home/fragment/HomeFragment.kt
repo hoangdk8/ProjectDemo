@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -17,10 +18,9 @@ import com.example.projectdemo.databinding.FragmentHomeBinding
 import com.example.projectdemo.dataclass.MusicBanner
 import com.example.projectdemo.home.adapter.AdapterMusicTop
 import com.example.projectdemo.home.adapter.HomeAdapter
-import com.example.projectdemo.home.adapter.OnItemClickListener
+import com.example.projectdemo.home.interfa.OnItemClickListener
 import com.example.projectdemo.home.viewmodel.HomeViewModel
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -91,7 +91,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
             itemList.addAll(data)
             adapter.notifyDataSetChanged()
         })
-        adapter = HomeAdapter(requireActivity(), itemList,this)
+        adapter = HomeAdapter(itemList, this)
         binding.mainRecyclerView.adapter = adapter
         if (binding.mainRecyclerView.childCount == 0) {
             binding.loading.visibility = View.VISIBLE
@@ -104,6 +104,15 @@ class HomeFragment : Fragment(), OnItemClickListener {
                     binding.loading.visibility = View.GONE
                     binding.bannerRecyclerView.visibility = View.VISIBLE
                 }
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                val totalItemCount = layoutManager.itemCount
+                if (lastVisibleItemPosition== totalItemCount-1){
+                    Toast.makeText(requireActivity(), "loadmore", Toast.LENGTH_SHORT).show()
+                    currentPage++
+                    //loadMore()
+                }
+                Log.d("hoang", "onScrolled: $lastVisibleItemPosition -- $totalItemCount")
             }
         })
 
@@ -114,8 +123,8 @@ class HomeFragment : Fragment(), OnItemClickListener {
             viewModel.fetchData(currentPage)
             viewModel.data.observe(requireActivity(), Observer { data ->
                 itemList.addAll(data)
-                adapter = HomeAdapter(requireActivity(), itemList,this)
-                Log.d("hoang", "loadMore: ${currentPage}")
+                adapter = HomeAdapter(itemList, this)
+                Log.d("hoang", "loadMore: $currentPage")
                 binding.mainRecyclerView.adapter = adapter
                 Log.d("hoang", "loadMore:${adapter.itemCount} ")
             })

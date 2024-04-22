@@ -7,18 +7,26 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.R
+import com.example.projectdemo.databinding.ItemBannerBinding
+import com.example.projectdemo.databinding.ItemPlaylistBinding
 import com.example.projectdemo.dataclass.MusicBanner
 
 class AdapterMusicTop(private val musicTopList: List<MusicBanner>) :
     RecyclerView.Adapter<AdapterMusicTop.MusicTopViewHolder>() {
-    class MusicTopViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val title: TextView = itemView.findViewById(R.id.txt_recycler_view)
-        val image: ImageView = itemView.findViewById(R.id.img_recycler_view)
+    class MusicTopViewHolder(private val binding: ItemBannerBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bindBannerView(data: MusicBanner){
+            binding.imgBanner.setImageResource(data.image)
+            binding.txtBanner.text = data.title
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicTopViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_banner, parent, false)
-        return MusicTopViewHolder(view)
+        val binding = ItemBannerBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return MusicTopViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -26,8 +34,6 @@ class AdapterMusicTop(private val musicTopList: List<MusicBanner>) :
     }
 
     override fun onBindViewHolder(holder: MusicTopViewHolder, position: Int) {
-        val music = musicTopList[position]
-        holder.title.text = music.title
-        holder.image.setImageResource(music.image)
+        holder.bindBannerView(musicTopList[position])
     }
 }

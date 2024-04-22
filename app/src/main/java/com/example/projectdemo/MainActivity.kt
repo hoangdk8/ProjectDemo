@@ -1,27 +1,21 @@
 package com.example.projectdemo
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.example.projectdemo.databinding.ActivityMainBinding
+import com.example.projectdemo.home.TimerCountDown
 import com.example.projectdemo.home.adapter.MyPagerAdapter
 import com.example.projectdemo.home.fragment.HomeFragment
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @Suppress("DEPRECATION")
@@ -31,6 +25,9 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass {
     private lateinit var exoPlayer: ExoPlayer
     private var baseMusicUrl = "https://pub-a59f0b5c0b134cdb808fe708183c7d0e.r2.dev/ringstorage/"
     private var isPlay = true
+    private var seconds = 0
+    private var hour: String = "00"
+    private var minute: String = "00"
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -40,105 +37,134 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass {
     }
 
     private fun setupViews() {
-        setBottomNavigation()
         setViewPager()
-
-
     }
 
     private fun setViewPager() {
         binding.viewPager.adapter = MyPagerAdapter(this)
-        binding.bottomNavigation.setOnTabSelectedListener(AHBottomNavigation.OnTabSelectedListener { position, _ ->
-            binding.viewPager.currentItem = position
+        binding.viewPager.isUserInputEnabled = false
+        binding.bottomNavigation.setOnItemSelectedListener {
+
+            when (it.itemId) {
+
+                R.id.menu_home -> binding.viewPager.currentItem = 0
+                R.id.menu_explore -> binding.viewPager.currentItem = 1
+                R.id.menu_search -> binding.viewPager.currentItem = 2
+                R.id.menu_me -> binding.viewPager.currentItem = 3
+                else -> {}
+            }
             true
-        })
+        }
+
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                binding.bottomNavigation.setCurrentItem(position, false)
+                binding.bottomNavigation.selectedItemId = when (position) {
+                    0 -> R.id.menu_home
+                    1 -> R.id.menu_explore
+                    2 -> R.id.menu_search
+                    3 -> R.id.menu_me
+                    else -> R.id.menu_home
+                }
             }
         })
-        binding.viewPager.isUserInputEnabled = false
     }
 
-    private fun setBottomNavigation() {
-        val item1 =
-            AHBottomNavigationItem("Home", R.drawable.ic_home, R.color.black)
-        val item2 =
-            AHBottomNavigationItem("Explore", R.drawable.ic_explore, R.color.black)
-        val item3 =
-            AHBottomNavigationItem("Search", R.drawable.ic_search, R.color.black)
-        val item4 =
-            AHBottomNavigationItem("Me", R.drawable.ic_me, R.color.black)
-
-
-        binding.bottomNavigation.addItem(item1)
-        binding.bottomNavigation.addItem(item2)
-        binding.bottomNavigation.addItem(item3)
-        binding.bottomNavigation.addItem(item4)
-        binding.bottomNavigation.defaultBackgroundColor = Color.parseColor("#FFFFFF")
-        binding.bottomNavigation.accentColor = Color.parseColor("#131313")
-        binding.bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
-        binding.bottomNavigation.inactiveColor = Color.parseColor("#B3B3B3")
-
-    }
-    suspend fun countDownToMinute(hour:Int,minute: Int, text: CharSequence) {
-        var seconds = 0
-        while (seconds <= minute * 60) {
-            val formattedTime = String.format("%02d:%02d", seconds / 60, seconds % 60)
-            withContext(Dispatchers.Main) {
-                binding.txtTime.text = "$formattedTime/0$hour:$minute"
+    private fun convertDuration(duration: Int) {
+        when {
+            duration < 10000 -> {
+                hour = "0"
+                minute = "0${duration / 1000}"
             }
-            delay(1000)
-            if (seconds == minute){
 
-            }else {
-                seconds++
+            duration in 10000..59999 -> {
+                hour = "0"
+                minute = "${duration / 1000}"
+            }
+
+            duration in 60000..60999 -> {
+                hour = "1"
+                minute = "00"
+            }
+
+            duration in 61000..119999 -> {
+                hour = "1"
+                minute = "${(duration - 60000) / 1000}"
+            }
+
+            else -> {
+                Toast.makeText(this, "$duration", Toast.LENGTH_SHORT).show()
             }
         }
     }
-    fun startCountDownToMinute(hour:Int,minute: Int, txtTime: TextView, ) {
-        CoroutineScope(Dispatchers.Default).launch {
-            countDownToMinute(hour,minute, binding.txtTime.text)
-        }
-    }
+
     @SuppressLint("SetTextI18n")
-    override fun onDataPass(data: String, title: String, time:Int) {
-        var hour : Int
-        var minute : Int
-        if (time >= 60000 && time <= 11999){
-            hour = 1
-            minute = (time - 60000) /1000
-        }else{
-            hour = 0
-            minute = time /1000
-        }
+    override fun onDataPass(data: String, title: String, time: Int) {
+        convertDuration(time)
+        isPlay = true
+        binding.txtTimeMax.text = "$hour:$minute"
         exoPlayer.stop()
         binding.txtTitle.text = title
-        startCountDownToMinute(hour,minute, binding.txtTime)
+        binding.ctnPlayMusic.visibility = View.VISIBLE
+        val mediaItem = MediaItem.fromUri(baseMusicUrl + data)
+        when {
+            binding.ctnPlayMusic.isVisible -> exoPlayer.setMediaItem(mediaItem)
+        }
+        seconds = 0
+        val timerCountDown = TimerCountDown(time.toLong(), object : TimerCountDown.OnTimerListener {
+
+            override fun onTick(seconds: Int) {
+                when {
+                    seconds < 10 -> binding.txtTimeCurrent.text = "$hour:0$seconds"
+                    seconds >= 10 -> binding.txtTimeCurrent.text = "$hour:$seconds"
+                }
+
+            }
+
+            override fun onFinish() {
+                seconds = 0
+            }
+        })
         exoPlayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
                 super.onPlaybackStateChanged(state)
                 if (state == Player.STATE_ENDED || state == Player.STATE_IDLE) {
                     binding.imgPlay.setImageResource(R.drawable.ic_play_black)
+                    binding.imgPlay.setOnClickListener {
+                        exoPlayer.setMediaItem(mediaItem)
+                        binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
+                        isPlay = true
+                        seconds = 0
+                    }
+                }
+            }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                super.onIsPlayingChanged(isPlaying)
+                if (isPlaying) {
+                    Log.d("hoang", "onItemClick: ")
+                    timerCountDown.startTimer()
+                    binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
+
+                } else {
+                    Log.d("Hoang", "onDataPass: ")
+                    timerCountDown.stopTimer()
+                    binding.imgPlay.setImageResource(R.drawable.ic_play_black)
                 }
             }
         })
-        val mediaItem = MediaItem.fromUri(baseMusicUrl+data)
-        exoPlayer.setMediaItem(mediaItem)
-        Log.d("hoang", "onItemClick:$data ")
+
         exoPlayer.prepare()
         exoPlayer.play()
-        binding.ctnPlayMusic.visibility = View.VISIBLE
+
         binding.imgPlay.setOnClickListener {
-            if (!isPlay){
+            if (!isPlay) {
                 exoPlayer.play()
                 isPlay = true
-                binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
-            }else{
+            } else {
                 exoPlayer.pause()
                 isPlay = false
-                binding.imgPlay.setImageResource(R.drawable.ic_play_black)
+
             }
         }
         binding.imgClose.setOnClickListener {

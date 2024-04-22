@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/container"
+            android:id="@+id/ctn_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/container">
+            app:layout_constraintTop_toBottomOf="@id/ctn_linear_layout">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txt_top_down"

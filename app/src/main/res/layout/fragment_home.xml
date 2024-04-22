@@ -22,16 +22,17 @@
             android:id="@+id/loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            app:layout_constraintEnd_toEndOf="@id/mainRecyclerView"
-            app:layout_constraintStart_toStartOf="@id/mainRecyclerView"
-            app:layout_constraintTop_toBottomOf="@+id/bannerRecyclerView" />
+            android:layout_marginTop="360dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mainRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bannerRecyclerView"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:listitem="@layout/item_playlist" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

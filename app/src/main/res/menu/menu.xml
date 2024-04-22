@@ -3,19 +3,19 @@
     <group android:checkableBehavior="single">
     <item
         android:id="@+id/menu_home"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/home_selector"
         android:title="Home" />
     <item
         android:id="@+id/menu_explore"
-        android:icon="@drawable/ic_explore"
+        android:icon="@drawable/explore_selector"
         android:title="Explore" />
     <item
         android:id="@+id/menu_search"
-        android:icon="@drawable/ic_search"
+        android:icon="@drawable/search_selector"
         android:title="Search" />
     <item
         android:id="@+id/menu_me"
-        android:icon="@drawable/ic_me"
+        android:icon="@drawable/me_selector"
         android:title="Me" />
     </group>
 </menu>
