@@ -70,7 +70,7 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/bevietnampro_bold"
                     android:singleLine="true"
-                    android:maxLength="22"
+                    android:maxLength="20"
                     android:text="Build Me Up Buttercup"
                     android:textColor="@color/black"
                     android:textSize="16sp" />

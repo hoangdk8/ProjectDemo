@@ -8,13 +8,13 @@ import com.example.projectdemo.databinding.ItemTopBinding
 import com.example.projectdemo.dataclass.DataDefaultRings
 import com.example.projectdemo.untils.convertDurationToTimeString
 
-class TopTrendingAdapter(private val topTrending :List<DataDefaultRings.Data>) :
-    RecyclerView.Adapter<TopTrendingAdapter.TopTrendingViewHolder>() {
+class TopMusicAdapter(private val topDown :List<DataDefaultRings.Data>) :
+    RecyclerView.Adapter<TopMusicAdapter.TopDownViewHolder>() {
     private var hour: String = "00"
     private var minute: String = "00"
-    inner class TopTrendingViewHolder(private val binding:ItemTopBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class TopDownViewHolder(private val binding: ItemTopBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bindTopTrend(data :DataDefaultRings.Data, position: Int){
+        fun bindTopDown(data :DataDefaultRings.Data, position: Int){
             val result = convertDurationToTimeString(data.duration!!)
             hour = result[0]
             minute = result[1]
@@ -24,19 +24,19 @@ class TopTrendingAdapter(private val topTrending :List<DataDefaultRings.Data>) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopTrendingViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopDownViewHolder {
         val binding = ItemTopBinding.inflate(
             LayoutInflater.from(parent.context),parent,false
         )
-        return TopTrendingViewHolder(binding)
+        return TopDownViewHolder(binding)
     }
 
 
     override fun getItemCount(): Int {
-        return topTrending.size
+        return topDown.size
     }
 
-    override fun onBindViewHolder(holder: TopTrendingViewHolder, position: Int) {
-        holder.bindTopTrend(topTrending[position],position)
+    override fun onBindViewHolder(holder: TopDownViewHolder, position: Int) {
+        holder.bindTopDown(topDown[position],position)
     }
 }

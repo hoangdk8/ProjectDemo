@@ -108,7 +108,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
                 val totalItemCount = layoutManager.itemCount
                 if (lastVisibleItemPosition== totalItemCount-1){
-                    Toast.makeText(requireActivity(), "loadmore", Toast.LENGTH_SHORT).show()
                     currentPage++
                     //loadMore()
                 }

@@ -2,19 +2,21 @@ package com.example.projectdemo.explore.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.projectdemo.R
 import com.example.projectdemo.databinding.FragmentExploreBinding
 import com.example.projectdemo.explore.adapter.CategoriesAdapter
-import com.example.projectdemo.explore.adapter.NewRingtoneAdapter
-import com.example.projectdemo.explore.adapter.TopDownAdapter
-import com.example.projectdemo.explore.adapter.TopTrendingAdapter
+import com.example.projectdemo.explore.adapter.TopMusicAdapter
 import com.example.projectdemo.explore.listener.OnClickCategoriesListener
 import com.example.projectdemo.explore.viewmodel.ExploreViewModel
 import com.example.projectdemo.home.viewmodel.HomeViewModel
@@ -28,9 +30,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
     }
 
     private lateinit var adapterCategories: CategoriesAdapter
-    private lateinit var adapterTopDown: TopDownAdapter
-    private lateinit var adapterTopTrending: TopTrendingAdapter
-    private lateinit var adapterNewRingtone: NewRingtoneAdapter
+    private lateinit var adapterTopDown: TopMusicAdapter
     private var dataPassListener: OnDataCategories? = null
     private lateinit var binding: FragmentExploreBinding
     private val viewModel: ExploreViewModel by viewModels()
@@ -68,7 +68,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.fetchData(0)
         viewModelHome.data.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "topdown" }
-            adapterTopDown = TopDownAdapter(data)
+            adapterTopDown = TopMusicAdapter(data)
             binding.recyclerviewTopDown.adapter = adapterTopDown
         })
 
@@ -80,8 +80,8 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.fetchData(0)
         viewModelHome.data.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "trends" }
-            adapterTopTrending = TopTrendingAdapter(data)
-            binding.recyclerviewTopTrending.adapter = adapterTopTrending
+            adapterTopDown = TopMusicAdapter(data)
+            binding.recyclerviewTopTrending.adapter = adapterTopDown
         })
 
         //New Ringtone
@@ -92,19 +92,26 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.fetchData(0)
         viewModelHome.data.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "new" }
-            adapterNewRingtone = NewRingtoneAdapter(data)
-            binding.recyclerviewNewRingtone.adapter = adapterNewRingtone
+            adapterTopDown = TopMusicAdapter(data)
+            binding.recyclerviewNewRingtone.adapter = adapterTopDown
         })
     }
 
     override fun onItemClick(id: Int, title: String, count: Int, url: String) {
         sendDataToFragment(id, title, count, url)
-//        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-//        val fragmentTransaction = fragmentManager.beginTransaction()
-//        val newFragment = DetailCategoriesFragment()
-//        fragmentTransaction.replace(R.id.fragment_container_view, newFragment) // R.id.fragment_container là ID của container trong layout của Activity chứa Fragment hiện tại
-//        fragmentTransaction.addToBackStack(null)
-//        fragmentTransaction.commit()
+        Toast.makeText(requireActivity(), "$id", Toast.LENGTH_SHORT).show()
+        val bundle = Bundle().apply {
+            putInt("id", id)
+            putString("title", title)
+            putInt("count", count)
+            putString("url", url)
+        }
+        val fragment = DetailCategoriesFragment()
+        fragment.arguments = bundle
+        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.fragment_container_view, fragment)
+        fragmentTransaction.commit()
     }
 
     private fun sendDataToFragment(id: Int, title: String, count: Int, url: String) {

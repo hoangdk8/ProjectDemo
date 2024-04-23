@@ -14,7 +14,7 @@ class TimerCountDown(
         countDownTimer = object : CountDownTimer(durationInMillis - elapsedMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 elapsedMillis += 1000
-                val seconds = (elapsedMillis / 1000) -1
+                val seconds = (elapsedMillis / 1000) - 1
                 listener.onTick(seconds.toInt())
             }
 
@@ -29,8 +29,8 @@ class TimerCountDown(
         countDownTimer?.cancel()
     }
 
-    fun continueTimer() {
-        startTimer()
+    fun resetTimer() {
+        elapsedMillis = 0
     }
 
     interface OnTimerListener {

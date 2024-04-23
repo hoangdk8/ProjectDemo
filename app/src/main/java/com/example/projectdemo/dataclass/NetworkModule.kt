@@ -34,5 +34,9 @@ object NetworkModule {
     fun provideApi(retrofit: Retrofit): CategoriesApi {
         return retrofit.create(CategoriesApi::class.java)
     }
-
+    @Provides
+    @Singleton
+    fun provideDetailCategoriesApi(retrofit: Retrofit): DetailCategoriesApi {
+        return retrofit.create(DetailCategoriesApi::class.java)
+    }
 }

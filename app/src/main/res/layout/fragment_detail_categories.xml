@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
+    android:background="#f2f3f7"
     android:clickable="true"
     android:focusable="true"
     android:layout_height="match_parent"
     tools:context=".explore.fragment.DetailCategoriesFragment">
 
-    <ImageView
-        android:id="@+id/img_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:src="@drawable/ic_back"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="?attr/homeAsUpIndicator" />
 
     <ImageView
         android:id="@+id/img_categories"
@@ -54,9 +54,11 @@
         app:layout_constraintTop_toBottomOf="@id/txt_title" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_detail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txt_count"
-        tools:listitem="@layout/item_playlist" />
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

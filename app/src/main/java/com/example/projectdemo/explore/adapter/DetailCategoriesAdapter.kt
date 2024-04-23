@@ -9,6 +9,7 @@ import com.example.projectdemo.databinding.ItemAdBinding
 import com.example.projectdemo.databinding.ItemLoadingBinding
 import com.example.projectdemo.databinding.ItemPlaylistBinding
 import com.example.projectdemo.dataclass.DataDefaultRings
+import com.example.projectdemo.dataclass.DataDetailCategories
 import com.example.projectdemo.home.interfa.OnItemClickListener
 import com.example.projectdemo.untils.convertDurationToTimeString
 
@@ -23,12 +24,11 @@ private val listener: OnItemClickListener
     companion object {
         private const val ITEM_TYPE_MUSIC = 0
         private const val ITEM_TYPE_FRAME = 1
-        private const val ITEM_TYPE_LOAD_MORE = 2
     }
 
     inner class PlayListViewHolder(private val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bindPlayListView(data: DataDefaultRings.Data, position: Int) {
+        fun bindPlayListView(data: DataDetailCategories.Data, position: Int) {
             val result = convertDurationToTimeString(data.duration!!)
             hour = result[0]
             minute = result[1]
@@ -74,14 +74,6 @@ private val listener: OnItemClickListener
                 return FrameViewHolder(binding)
             }
 
-            ITEM_TYPE_LOAD_MORE -> {
-                val binding = ItemLoadingBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-                return LoadMoreViewHolder(binding)
-            }
 
             else -> throw IllegalArgumentException("Invalid view type")
         }
@@ -91,7 +83,7 @@ private val listener: OnItemClickListener
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is PlayListViewHolder -> {
-                holder.bindPlayListView(itemList[position] as DataDefaultRings.Data,position)
+                holder.bindPlayListView(itemList[position] as DataDetailCategories.Data,position)
             }
 
             is FrameViewHolder -> {
@@ -104,13 +96,12 @@ private val listener: OnItemClickListener
     }
 
     override fun getItemCount(): Int {
-        return itemList.size + 1
+        return itemList.size
     }
 
     override fun getItemViewType(position: Int): Int {
         return when {
             position % 5 == 0 && position != 0 && position < itemList.size -> ITEM_TYPE_FRAME
-            position == itemList.size -> ITEM_TYPE_LOAD_MORE
             else -> ITEM_TYPE_MUSIC
         }
     }
