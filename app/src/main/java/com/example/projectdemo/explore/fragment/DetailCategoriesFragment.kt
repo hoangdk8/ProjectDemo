@@ -74,10 +74,8 @@ class DetailCategoriesFragment : Fragment(), ExploreFragment.OnDataCategories, O
         val title = arguments?.getString("title")
         val count = arguments?.getInt("count")
         val url = arguments?.getString("url")
-        Log.d("hoang", "setupViews:$id,$title,$count,$url ")
         Glide.with(requireActivity()).load(baseImageUrl + url).into(binding.imgCategories)
         binding.imgCategories.setOnClickListener {
-            Log.d("hoang", "setupViews: ")
         }
         binding.txtTitle.text = title
         binding.txtCount.text = "$count ringtones"
@@ -92,7 +90,6 @@ class DetailCategoriesFragment : Fragment(), ExploreFragment.OnDataCategories, O
 
             adapter = DetailCategoriesAdapter(it,this)
             binding.recyclerViewDetail.adapter = adapter
-            Log.d("hoang", "setupViewss: ${adapter.itemCount}")
         })
     }
 

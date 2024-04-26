@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
 
     @SuppressLint("SetTextI18n")
     override fun onDataPass(data: String, title: String, time: Int) {
+        binding.ctnPlayMusic.visibility = View.VISIBLE
         //setupViews sau khi click
         val result = convertDurationToTimeString(time)
         binding.txtTimeCurrent.text = "0:00"
@@ -110,7 +111,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
         seconds = 0
         binding.txtTimeMax.text = "$minute:$second"
         binding.txtTitle.text = title
-        binding.ctnPlayMusic.visibility = View.VISIBLE
+
         //setup exoplayer
         isPlay = true
         exoPlayer.stop()
@@ -126,7 +127,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
         //Đếm thời gian
         timer = TimerCountDown(time.toLong(), object : TimerCountDown.OnTimerListener {
             override fun onTick(seconds: Int) {
-                Log.d("hoang", "onItemClick:$seconds ")
+
 
                     when {
                         seconds < 10 -> binding.txtTimeCurrent.text = "$minute:0$seconds"
@@ -164,7 +165,8 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
                     Log.d("hoang", "onItemClick1: ")
                     binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
 
-                } else {
+                }
+                else {
                     Log.d("hoang", "onItemClick2: ")
                     binding.imgPlay.setImageResource(R.drawable.ic_play_black)
                 }

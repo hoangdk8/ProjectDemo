@@ -1,6 +1,7 @@
 package com.example.projectdemo.explore.fragment
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,12 +19,13 @@ import com.example.projectdemo.explore.adapter.CategoriesAdapter
 import com.example.projectdemo.explore.adapter.TopMusicAdapter
 import com.example.projectdemo.explore.listener.OnClickCategoriesListener
 import com.example.projectdemo.explore.viewmodel.ExploreViewModel
+import com.example.projectdemo.home.fragment.HomeFragment
 import com.example.projectdemo.home.interfa.OnItemClickListener
 import com.example.projectdemo.home.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ExploreFragment : Fragment(), OnClickCategoriesListener {
+class ExploreFragment : Fragment(), OnClickCategoriesListener,OnItemClickListener {
     interface OnDataCategories {
         @SuppressLint("NotConstructor")
         fun onDataCategories(id: Int, title: String, count: Int, url: String)
@@ -32,6 +34,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
     private lateinit var adapterCategories: CategoriesAdapter
     private lateinit var adapterTopDown: TopMusicAdapter
     private var dataPassListener: OnDataCategories? = null
+    private var dataPass: HomeFragment.OnDataPass? = null
     private lateinit var binding: FragmentExploreBinding
     private val viewModel: ExploreViewModel by viewModels()
     private val viewModelHome: HomeViewModel by viewModels()
@@ -48,7 +51,14 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         setupViews()
         actionView()
     }
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is HomeFragment.OnDataPass) {
+            dataPass = context
+        } else {
+            throw RuntimeException("$context must implement OnDataPass")
+        }
+    }
     private fun actionView() {
         binding.seeAllTopDown.setOnClickListener {
             val bundle = Bundle().apply {
@@ -111,7 +121,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.fetchData(0)
         viewModelHome.data.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "topdown" }
-            adapterTopDown = TopMusicAdapter(data)
+            adapterTopDown = TopMusicAdapter(data,this)
             binding.recyclerviewTopDown.adapter = adapterTopDown
         })
 
@@ -123,7 +133,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.fetchData(0)
         viewModelHome.data.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "trends" }
-            adapterTopDown = TopMusicAdapter(data)
+            adapterTopDown = TopMusicAdapter(data,this)
             binding.recyclerviewTopTrending.adapter = adapterTopDown
         })
 
@@ -135,7 +145,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.fetchData(0)
         viewModelHome.data.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "new" }
-            adapterTopDown = TopMusicAdapter(data)
+            adapterTopDown = TopMusicAdapter(data,this)
             binding.recyclerviewNewRingtone.adapter = adapterTopDown
         })
     }
@@ -160,6 +170,12 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
 
     private fun sendDataToFragment(id: Int, title: String, count: Int, url: String) {
         dataPassListener?.onDataCategories(id, title, count, url)
+    }
+    private fun sendDataToActivity(data: String,title: String,time:Int) {
+        dataPass?.onDataPass(data,title,time)
+    }
+    override fun onItemClick(url: String, title: String, time: Int) {
+        sendDataToActivity(url,title,time)
     }
 
 }
