@@ -2,6 +2,7 @@ package com.example.projectdemo.dataclass
 
 
 data class MusicBanner(val title: String, val image: Int)
+data class ChildRecyclerViewData(val childItems: List<Any>)
 data class AD(val image: Int)
 //data class DataItem(val viewType: Int) {
 //

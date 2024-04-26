@@ -2,7 +2,6 @@ package com.example.projectdemo.explore.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,7 @@ import com.example.projectdemo.explore.adapter.CategoriesAdapter
 import com.example.projectdemo.explore.adapter.TopMusicAdapter
 import com.example.projectdemo.explore.listener.OnClickCategoriesListener
 import com.example.projectdemo.explore.viewmodel.ExploreViewModel
+import com.example.projectdemo.home.interfa.OnItemClickListener
 import com.example.projectdemo.home.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,6 +46,49 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
+        actionView()
+    }
+
+    private fun actionView() {
+        binding.seeAllTopDown.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("HOME_TYPE", "topdown")
+                putString("TITLE", "${binding.txtTopDown.text}")
+            }
+            val fragment = FragmentSeeAll()
+            fragment.arguments = bundle
+            val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.setCustomAnimations(R.anim.anim_left_in,R.anim.anim_left_out)
+            fragmentTransaction.replace(R.id.fragment_container_view, fragment)
+            fragmentTransaction.commit()
+        }
+        binding.seeAllTopTrending.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("HOME_TYPE", "trends")
+                putString("TITLE", "${binding.txtTopTrending.text}")
+            }
+            val fragment = FragmentSeeAll()
+            fragment.arguments = bundle
+            val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.setCustomAnimations(R.anim.anim_left_in,R.anim.anim_left_out)
+            fragmentTransaction.replace(R.id.fragment_container_view, fragment)
+            fragmentTransaction.commit()
+        }
+        binding.seeAllNewRingtone.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("HOME_TYPE", "new")
+                putString("TITLE", "${binding.txtNewRingtone.text}")
+            }
+            val fragment = FragmentSeeAll()
+            fragment.arguments = bundle
+            val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.setCustomAnimations(R.anim.anim_left_in,R.anim.anim_left_out)
+            fragmentTransaction.replace(R.id.fragment_container_view, fragment)
+            fragmentTransaction.commit()
+        }
     }
 
     private fun setupViews() {
@@ -110,11 +153,13 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         fragment.arguments = bundle
         val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.fragment_container_view, fragment)
+        fragmentTransaction.setCustomAnimations(R.anim.anim_left_in,R.anim.anim_left_out)
+        fragmentTransaction.replace(R.id.fragment_container_view, fragment)
         fragmentTransaction.commit()
     }
 
     private fun sendDataToFragment(id: Int, title: String, count: Int, url: String) {
         dataPassListener?.onDataCategories(id, title, count, url)
     }
+
 }

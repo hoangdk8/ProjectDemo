@@ -1,8 +1,5 @@
 package com.example.projectdemo.dataclass
 
-import androidx.lifecycle.ViewModelProvider
-import com.example.projectdemo.MyApplication
-import com.example.projectdemo.explore.viewmodel.ExploreViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

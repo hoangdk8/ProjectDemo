@@ -70,4 +70,6 @@ dependencies {
 
     implementation ("com.google.android.exoplayer:exoplayer-core:2.19.1")
 
+    //eventbus
+    implementation ("org.greenrobot:eventbus:3.3.1")
 }

@@ -18,6 +18,7 @@
         android:paddingVertical="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ctn_music"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 

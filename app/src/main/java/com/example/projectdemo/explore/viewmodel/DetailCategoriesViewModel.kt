@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.projectdemo.dataclass.ApiHelper
-import com.example.projectdemo.dataclass.DataCategories
-import com.example.projectdemo.dataclass.DataDefaultRings
 import com.example.projectdemo.dataclass.DataDetailCategories
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

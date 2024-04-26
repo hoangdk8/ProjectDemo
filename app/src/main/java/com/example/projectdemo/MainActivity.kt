@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.example.projectdemo.databinding.ActivityMainBinding
+import com.example.projectdemo.dataclass.BASE_URL_MUSIC
 import com.example.projectdemo.explore.fragment.ExploreFragment
 import com.example.projectdemo.home.TimerCountDown
 import com.example.projectdemo.home.adapter.MyPagerAdapter
@@ -17,7 +18,6 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.NonCancellable.cancel
 
 
 @Suppress("DEPRECATION")
@@ -26,11 +26,10 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
     ExploreFragment.OnDataCategories {
     private lateinit var binding: ActivityMainBinding
     private lateinit var exoPlayer: ExoPlayer
-    private var baseMusicUrl = "https://pub-a59f0b5c0b134cdb808fe708183c7d0e.r2.dev/ringstorage/"
     private var isPlay = true
     private var seconds = 0
-    private var hour: String = "00"
     private var minute: String = "00"
+    private var second: String = "00"
     private var timer : TimerCountDown?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,17 +105,17 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
         //setupViews sau khi click
         val result = convertDurationToTimeString(time)
         binding.txtTimeCurrent.text = "0:00"
-        hour = result[0]
-        minute = result[1]
+        minute = result[0]
+        second = result[1]
         seconds = 0
-        binding.txtTimeMax.text = "$hour:$minute"
+        binding.txtTimeMax.text = "$minute:$second"
         binding.txtTitle.text = title
         binding.ctnPlayMusic.visibility = View.VISIBLE
         //setup exoplayer
         isPlay = true
         exoPlayer.stop()
         timer?.stopTimer()
-        val mediaItem = MediaItem.fromUri(baseMusicUrl + data)
+        val mediaItem = MediaItem.fromUri(BASE_URL_MUSIC + data)
         when {
             binding.ctnPlayMusic.isVisible -> {
                 exoPlayer.setMediaItem(mediaItem)
@@ -130,16 +129,19 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
                 Log.d("hoang", "onItemClick:$seconds ")
 
                     when {
-                        seconds < 10 -> binding.txtTimeCurrent.text = "$hour:0$seconds"
-                        seconds >= 10 -> binding.txtTimeCurrent.text = "$hour:$seconds"
+                        seconds < 10 -> binding.txtTimeCurrent.text = "$minute:0$seconds"
+                        seconds >= 10 -> binding.txtTimeCurrent.text = "$minute:$seconds"
                     }
             }
 
             override fun onFinish() {
-                seconds = minute.toInt()
+                seconds = second.toInt()
             }
         })
+
         timer?.startTimer()
+        exoPlayer.prepare()
+        exoPlayer.play()
         exoPlayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
                 super.onPlaybackStateChanged(state)
@@ -150,6 +152,8 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
                         binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
                         isPlay = true
                         seconds = 0
+                        timer!!.resetTimer()
+                        timer!!.startTimer()
                     }
                 }
             }
@@ -167,21 +171,23 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
             }
         })
 
-        exoPlayer.prepare()
-        exoPlayer.play()
+
         binding.imgPlay.setOnClickListener {
             if (!isPlay) {
+                binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
                 exoPlayer.play()
                 isPlay = true
+                timer!!.startTimer()
             } else {
                 exoPlayer.pause()
                 isPlay = false
-
+                timer!!.stopTimer()
+                binding.imgPlay.setImageResource(R.drawable.ic_play_black)
             }
         }
         binding.imgClose.setOnClickListener {
-            seconds = minute.toInt()
-            timer?.stopTimer()
+            seconds = second.toInt()
+            timer?.resetTimer()
             exoPlayer.stop()
             binding.ctnPlayMusic.visibility = View.GONE
         }

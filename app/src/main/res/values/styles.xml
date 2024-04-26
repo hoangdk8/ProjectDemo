@@ -19,4 +19,8 @@
         <item name="android:textSize">14sp</item>
         <!-- Các thuộc tính khác có thể được thiết lập tùy theo nhu cầu của bạn -->
     </style>
+
+    <style name="circle">
+        <item name="cornerSize">20%</item>
+    </style>
 </resources>

@@ -3,7 +3,6 @@ package com.example.projectdemo.home.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.R
 import com.example.projectdemo.databinding.ItemAdBinding
@@ -12,15 +11,17 @@ import com.example.projectdemo.databinding.ItemPlaylistBinding
 import com.example.projectdemo.dataclass.DataDefaultRings
 import com.example.projectdemo.home.interfa.OnItemClickListener
 import com.example.projectdemo.untils.convertDurationToTimeString
+import org.greenrobot.eventbus.EventBus
 
 
 class HomeAdapter(
     private val itemList: List<Any>,
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var hour: String = "00"
     private var minute: String = "00"
-    private var selectedPosition = RecyclerView.NO_POSITION
+    private var second: String = "00"
+    private var selectedOldPosition = RecyclerView.NO_POSITION
+    private var selectedNewPosition = RecyclerView.NO_POSITION
 
     companion object {
         private const val ITEM_TYPE_MUSIC = 0
@@ -32,18 +33,25 @@ class HomeAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bindPlayListView(data: DataDefaultRings.Data, position: Int) {
             val result = convertDurationToTimeString(data.duration!!)
-            hour = result[0]
-            minute = result[1]
+            minute = result[0]
+            second = result[1]
             binding.tvTitle.text = data.name
-            binding.tvTime.text = "$hour:$minute"
-            binding.imgStatus.setImageResource(R.drawable.ic_play)
-            binding.imgStatus.setOnClickListener {
+            binding.tvTime.text = "$minute:$second"
+            if (position == selectedOldPosition) {
+                binding.imgStatus.setImageResource(R.drawable.ic_play)
+            } else if (position == selectedNewPosition) {
+                binding.imgStatus.setImageResource(R.drawable.ic_pause)
+            }
+            binding.ctnMusic.setOnClickListener {
+                selectedOldPosition = selectedNewPosition
+                selectedNewPosition = position
                 listener.onItemClick(
                     data.url!!,
                     data.name!!,
                     data.duration!!
                 )
-                selectedPosition = position
+                notifyItemChanged(selectedOldPosition)
+                notifyItemChanged(selectedNewPosition)
             }
 
         }
@@ -88,7 +96,10 @@ class HomeAdapter(
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
-
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        EventBus.getDefault().unregister(holder)
+    }
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
@@ -106,7 +117,7 @@ class HomeAdapter(
     }
 
     override fun getItemCount(): Int {
-        return itemList.size + 1
+        return itemList.size
     }
 
     override fun getItemViewType(position: Int): Int {
