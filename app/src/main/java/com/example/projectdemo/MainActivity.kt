@@ -8,9 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.example.projectdemo.databinding.ActivityMainBinding
-import com.example.projectdemo.dataclass.BASE_URL_MUSIC
+import com.example.projectdemo.data.dataclass.BASE_URL_MUSIC
 import com.example.projectdemo.explore.fragment.ExploreFragment
-import com.example.projectdemo.home.TimerCountDown
+import com.example.projectdemo.untils.TimerCountDown
 import com.example.projectdemo.home.adapter.MyPagerAdapter
 import com.example.projectdemo.home.fragment.HomeFragment
 import com.example.projectdemo.untils.convertDurationToTimeString

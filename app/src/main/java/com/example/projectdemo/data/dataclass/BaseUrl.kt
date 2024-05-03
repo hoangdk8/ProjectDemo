@@ -1,4 +1,4 @@
-package com.example.projectdemo.dataclass
+package com.example.projectdemo.data.dataclass
 
 const val BASE_URL_API = "https://dogonoithatxinh.com/minringtone/rest/"
 const val BASE_URL_MUSIC = "https://pub-a59f0b5c0b134cdb808fe708183c7d0e.r2.dev/ringstorage/"

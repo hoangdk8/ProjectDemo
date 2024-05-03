@@ -3,7 +3,6 @@ package com.example.projectdemo.explore.fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +15,15 @@ import com.bumptech.glide.Glide
 import com.example.projectdemo.R
 import com.example.projectdemo.databinding.FragmentDetailCategoriesBinding
 import com.example.projectdemo.explore.adapter.DetailCategoriesAdapter
-import com.example.projectdemo.explore.viewmodel.DetailCategoriesViewModel
-import com.example.projectdemo.home.adapter.HomeAdapter
+import com.example.projectdemo.explore.viewmodel.ExploreViewModel
 import com.example.projectdemo.home.fragment.HomeFragment
-import com.example.projectdemo.home.interfa.OnItemClickListener
-import com.example.projectdemo.home.viewmodel.HomeViewModel
+import com.example.projectdemo.home.listener.OnItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DetailCategoriesFragment : Fragment(), ExploreFragment.OnDataCategories, OnItemClickListener {
     private lateinit var binding: FragmentDetailCategoriesBinding
-    private val viewModel: DetailCategoriesViewModel by viewModels()
+    private val viewModel: ExploreViewModel by viewModels()
     private lateinit var adapter: DetailCategoriesAdapter
     private var dataPassListener: HomeFragment.OnDataPass? = null
     val baseImageUrl =
@@ -85,10 +82,10 @@ class DetailCategoriesFragment : Fragment(), ExploreFragment.OnDataCategories, O
             LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
         binding.recyclerViewDetail.isFocusable = false
         binding.recyclerViewDetail.isNestedScrollingEnabled = false
-        viewModel.fetchData(id!!)
-        viewModel.data.observe(requireActivity(), Observer { it ->
+        viewModel.fetchDataDetail(id!!)
+        viewModel.dataDetail.observe(requireActivity(), Observer { it ->
 
-            adapter = DetailCategoriesAdapter(it,this)
+            adapter = DetailCategoriesAdapter(it)
             binding.recyclerViewDetail.adapter = adapter
         })
     }

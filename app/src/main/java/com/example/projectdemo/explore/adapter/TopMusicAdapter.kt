@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.R
 import com.example.projectdemo.databinding.ItemTopBinding
-import com.example.projectdemo.dataclass.DataDefaultRings
-import com.example.projectdemo.home.interfa.OnItemClickListener
+import com.example.projectdemo.data.dataclass.DataDefaultRings
+import com.example.projectdemo.home.listener.OnItemClickListener
 import com.example.projectdemo.untils.convertDurationToTimeString
 
 class TopMusicAdapter(private val topDown :List<DataDefaultRings.Data>,
@@ -20,7 +20,7 @@ class TopMusicAdapter(private val topDown :List<DataDefaultRings.Data>,
     private var selectedPosition = RecyclerView.NO_POSITION
     inner class TopDownViewHolder(private val binding: ItemTopBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bindTopDown(data :DataDefaultRings.Data, position: Int){
+        fun bindTopDown(data : DataDefaultRings.Data, position: Int){
             val result = convertDurationToTimeString(data.duration!!)
             hour = result[0]
             minute = result[1]

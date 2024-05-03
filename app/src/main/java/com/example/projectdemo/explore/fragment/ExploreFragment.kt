@@ -20,7 +20,7 @@ import com.example.projectdemo.explore.adapter.TopMusicAdapter
 import com.example.projectdemo.explore.listener.OnClickCategoriesListener
 import com.example.projectdemo.explore.viewmodel.ExploreViewModel
 import com.example.projectdemo.home.fragment.HomeFragment
-import com.example.projectdemo.home.interfa.OnItemClickListener
+import com.example.projectdemo.home.listener.OnItemClickListener
 import com.example.projectdemo.home.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -109,7 +109,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,OnItemClickListene
         binding.recyclerviewCategories.isNestedScrollingEnabled = false
         viewModel.fetchData()
         viewModel.data.observe(requireActivity(), Observer { data ->
-            adapterCategories = CategoriesAdapter(requireActivity(), data, this)
+            adapterCategories = CategoriesAdapter(requireActivity(), data!!, this)
             binding.recyclerviewCategories.adapter = adapterCategories
         })
 
@@ -118,8 +118,8 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,OnItemClickListene
             GridLayoutManager(requireActivity(), 3, GridLayoutManager.HORIZONTAL, false)
         binding.recyclerviewTopDown.isFocusable = false
         binding.recyclerviewTopDown.isNestedScrollingEnabled = false
-        viewModelHome.fetchData(0)
-        viewModelHome.data.observe(requireActivity(), Observer { it ->
+        viewModelHome.getItemsFilter(0)
+        viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "topdown" }
             adapterTopDown = TopMusicAdapter(data,this)
             binding.recyclerviewTopDown.adapter = adapterTopDown
@@ -130,8 +130,8 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,OnItemClickListene
             GridLayoutManager(requireActivity(), 3, GridLayoutManager.HORIZONTAL, false)
         binding.recyclerviewTopTrending.isFocusable = false
         binding.recyclerviewTopTrending.isNestedScrollingEnabled = false
-        viewModelHome.fetchData(0)
-        viewModelHome.data.observe(requireActivity(), Observer { it ->
+        viewModelHome.getItemsFilter(0)
+        viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "trends" }
             adapterTopDown = TopMusicAdapter(data,this)
             binding.recyclerviewTopTrending.adapter = adapterTopDown
@@ -142,8 +142,8 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,OnItemClickListene
             GridLayoutManager(requireActivity(), 3, GridLayoutManager.HORIZONTAL, false)
         binding.recyclerviewNewRingtone.isFocusable = false
         binding.recyclerviewNewRingtone.isNestedScrollingEnabled = false
-        viewModelHome.fetchData(0)
-        viewModelHome.data.observe(requireActivity(), Observer { it ->
+        viewModelHome.getItemsFilter(0)
+        viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "new" }
             adapterTopDown = TopMusicAdapter(data,this)
             binding.recyclerviewNewRingtone.adapter = adapterTopDown

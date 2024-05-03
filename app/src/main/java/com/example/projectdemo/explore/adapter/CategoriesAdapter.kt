@@ -4,17 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.projectdemo.R
 import com.example.projectdemo.databinding.ItemCategoriesBinding
-import com.example.projectdemo.databinding.ItemPlaylistBinding
-import com.example.projectdemo.dataclass.BASE_URL_IMAGE
-import com.example.projectdemo.dataclass.DataCategories
-import com.example.projectdemo.explore.fragment.ExploreFragment
+import com.example.projectdemo.data.dataclass.BASE_URL_IMAGE
+import com.example.projectdemo.data.dataclass.DataCategories
 import com.example.projectdemo.explore.listener.OnClickCategoriesListener
-import com.example.projectdemo.home.interfa.OnItemClickListener
 
 class CategoriesAdapter(
     private val context: Context,

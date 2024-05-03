@@ -1,97 +1,90 @@
 package com.example.projectdemo.explore.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.R
 import com.example.projectdemo.databinding.ItemAdBinding
-import com.example.projectdemo.databinding.ItemLoadingBinding
 import com.example.projectdemo.databinding.ItemPlaylistBinding
-import com.example.projectdemo.dataclass.DataDefaultRings
-import com.example.projectdemo.dataclass.DataDetailCategories
-import com.example.projectdemo.home.interfa.OnItemClickListener
+import com.example.projectdemo.data.dataclass.DataDetailCategories
+import com.example.projectdemo.data.dataclass.DataItemType.Companion.ITEM_TYPE_ADVERTISE
+import com.example.projectdemo.data.dataclass.DataItemType.Companion.ITEM_TYPE_MUSIC
 import com.example.projectdemo.untils.convertDurationToTimeString
 
-class DetailCategoriesAdapter(
-private val itemList: List<Any>,
-private val listener: OnItemClickListener
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DetailCategoriesAdapter(private val itemList: List<Any>) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var hour: String = "00"
     private var minute: String = "00"
     private var selectedPosition = RecyclerView.NO_POSITION
+    private lateinit var onClickItem: (ringtoneModel: DataDetailCategories.Data) -> Unit
+    private var isPlaying = false
 
-    companion object {
-        private const val ITEM_TYPE_MUSIC = 0
-        private const val ITEM_TYPE_FRAME = 1
-    }
-
-    inner class PlayListViewHolder(private val binding: ItemPlaylistBinding) :
+    inner class MusicViewHolder(private val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bindPlayListView(data: DataDetailCategories.Data, position: Int) {
-            val result = convertDurationToTimeString(data.duration!!)
+
+        fun bindMusicView(cateRingtonesModel: DataDetailCategories.Data, position: Int) {
+            val result = convertDurationToTimeString(cateRingtonesModel.duration!!)
             hour = result[0]
             minute = result[1]
-            binding.tvTitle.text = data.name
+            binding.tvTitle.text = cateRingtonesModel.name
             binding.tvTime.text = "$hour:$minute"
-            binding.imgStatus.setImageResource(R.drawable.ic_play)
-            binding.imgStatus.setOnClickListener {
-                listener.onItemClick(
-                    data.url!!,
-                    data.name!!,
-                    data.duration!!
-                )
-                selectedPosition = position
+            if (isPlaying && selectedPosition == position) {
+                binding.imgStatus.setImageResource(R.drawable.ic_pause)
+            } else {
+                binding.imgStatus.setImageResource(R.drawable.ic_play)
             }
-
+            binding.imgStatus.setOnClickListener {
+                isPlaying = !isPlaying
+                onClickItem.invoke(cateRingtonesModel)
+                selectedPosition = position
+                notifyItemChanged(position)
+            }
         }
     }
 
-    inner class FrameViewHolder(binding: ItemAdBinding) :
-        RecyclerView.ViewHolder(binding.root)
-
-    inner class LoadMoreViewHolder(binding: ItemLoadingBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    fun onClickItemListener(onClickItem: (ringtoneModelCategory: DataDetailCategories.Data) -> Unit) {
+        this.onClickItem = onClickItem
     }
 
+//    inner class LoadingViewHolder(private val binding: ItemLoadingBinding) :
+//        RecyclerView.ViewHolder(binding.root)
+
+    inner class AdversiteViewHolder(private val binding: ItemAdBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
+        return when (viewType) {
             ITEM_TYPE_MUSIC -> {
                 val binding = ItemPlaylistBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                return PlayListViewHolder(binding)
+                return MusicViewHolder(binding)
             }
 
-            ITEM_TYPE_FRAME -> {
+            ITEM_TYPE_ADVERTISE -> {
                 val binding = ItemAdBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                return FrameViewHolder(binding)
+                return AdversiteViewHolder(binding)
             }
-
 
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is PlayListViewHolder -> {
-                holder.bindPlayListView(itemList[position] as DataDetailCategories.Data,position)
+            is MusicViewHolder -> {
+                itemList[position].let { holder.bindMusicView(it as DataDetailCategories.Data, position) }
             }
 
-            is FrameViewHolder -> {
+            is AdversiteViewHolder -> {}
 
-            }
-
-            is LoadMoreViewHolder -> {
-            }
+            // is LoadingViewHolder -> {}
         }
     }
 
@@ -101,7 +94,7 @@ private val listener: OnItemClickListener
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            position % 5 == 0 && position != 0 && position < itemList.size -> ITEM_TYPE_FRAME
+            position % 5 == 0 && position != 0 && position < itemList.size -> ITEM_TYPE_ADVERTISE
             else -> ITEM_TYPE_MUSIC
         }
     }
