@@ -22,6 +22,10 @@ class ExploreViewModel @Inject constructor(
     private val _dataDetail = MutableLiveData<List<DataDetailCategories.Data>>()
     val dataDetail: LiveData<List<DataDetailCategories.Data>> get() = _dataDetail
 
+    private val _hasNext = MutableLiveData<DataDetailCategories>()
+    val hasNext: LiveData<DataDetailCategories> get() = _hasNext
+
+
     init {
         _dataDetail.value = mutableListOf()
         fetchData()
@@ -44,16 +48,30 @@ class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun fetchDataDetail(cat: Int) {
+    fun fetchDataDetail(cat: Int,offset:Int) {
         viewModelScope.launch {
             try {
-                val response = categoryRepository.getListOfCategory(cat)
+                val response = categoryRepository.getListOfCategory(cat,offset)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         val newData = it.data as List<DataDetailCategories.Data>
                         val currentData = _dataDetail.value.orEmpty().toMutableList()
                         currentData.addAll(newData)
                         _dataDetail.value = currentData
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error fetching items")
+            }
+        }
+    }
+    fun fetchHasNext(cat: Int,offset:Int) {
+        viewModelScope.launch {
+            try {
+                val response = categoryRepository.getListOfCategory(cat,offset)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _hasNext.value = it
                     }
                 }
             } catch (e: Exception) {

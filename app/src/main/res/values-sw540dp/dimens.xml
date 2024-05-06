@@ -1205,4 +1205,13 @@
   <dimen name="_100sp">
     150.0sp
   </dimen>
+  <dimen name="text_margin">
+    24.0dp
+  </dimen>
+  <dimen name="app_bar_height">
+    270.0dp
+  </dimen>
+  <dimen name="fab_margin">
+    24.0dp
+  </dimen>
 </resources>

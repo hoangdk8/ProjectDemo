@@ -17,6 +17,6 @@ interface ApiService {
     @GET("categories?lang=en_VN&token=12345")
     suspend fun dataCategories(): Response<DataCategories>
 
-    @GET("ringtones?lang=en_VN&offset=0&limit=40&order=downDate_desc&token=12345")
-    suspend fun dataDetailCategories(@Query("cat") cat: Int): Response<DataDetailCategories>
+    @GET("ringtones?lang=en_VN&limit=40&order=downDate_desc&token=12345")
+    suspend fun dataDetailCategories(@Query("cat") cat: Int,@Query("offset") offset: Int): Response<DataDetailCategories>
 }

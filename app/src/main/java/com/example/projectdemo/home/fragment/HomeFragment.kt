@@ -73,7 +73,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
             val layoutManager = binding.mainRecyclerView.layoutManager as LinearLayoutManager
             val lastVisiblePosition = layoutManager.findFirstVisibleItemPosition()
             if (lastVisiblePosition != RecyclerView.NO_POSITION && lastVisiblePosition < it.size) {
-                layoutManager.scrollToPosition(lastVisiblePosition)
+                layoutManager.scrollToPosition(lastVisiblePosition+1)
             }
             binding.mainRecyclerView.adapter = adapter
             if (adapter.itemCount > 1) {

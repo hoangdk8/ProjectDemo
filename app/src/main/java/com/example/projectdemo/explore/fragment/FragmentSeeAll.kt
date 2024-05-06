@@ -82,10 +82,7 @@ class FragmentSeeAll : Fragment(), OnItemClickListener {
             val data = it.filter { it.hometype == homeType }
             itemList.addAll(data)
             Log.d("hoang", "setupViews:$currentPage ")
-            adapterTopDown = TopMusicAdapter(
-                itemList as List<DataDefaultRings.Data>,
-                this@FragmentSeeAll
-            )
+            adapterTopDown = TopMusicAdapter(itemList as List<DataDefaultRings.Data>, this@FragmentSeeAll)
             adapterTopDown.notifyDataSetChanged()
             val layoutManager = binding.recyclerViewSeeAllTopDownload.layoutManager as LinearLayoutManager
             val lastVisiblePosition = layoutManager.findFirstVisibleItemPosition()

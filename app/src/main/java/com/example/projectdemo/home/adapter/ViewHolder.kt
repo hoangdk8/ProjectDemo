@@ -13,6 +13,9 @@ class HorizontalViewHolder(private var binding: EachItemBinding) :
         binding.childRecyclerView.setHasFixedSize(true)
         binding.childRecyclerView.layoutManager =
             LinearLayoutManager(binding.root.context, RecyclerView.HORIZONTAL, false)
+
+        val layoutManager = binding.childRecyclerView.layoutManager as LinearLayoutManager
+            layoutManager.scrollToPosition(1)
     }
 
     fun bind(recyclerItemList: List<MusicBanner>) {

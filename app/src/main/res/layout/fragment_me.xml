@@ -58,6 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:singleLine="true"
                     android:fontFamily="@font/bevietnampro_medium"
                     android:text="Đăng nhập" />
             </androidx.appcompat.widget.LinearLayoutCompat>

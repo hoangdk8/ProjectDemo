@@ -38,6 +38,9 @@ android {
     viewBinding {
         enable = true
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 kapt {
@@ -74,4 +77,7 @@ dependencies {
     implementation ("org.greenrobot:eventbus:3.3.1")
 
     implementation("com.jakewharton.timber:timber:4.7.1")
+
+    //lottiefiles
+    implementation ("com.airbnb.android:lottie:6.3.0")
 }

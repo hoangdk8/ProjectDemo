@@ -402,5 +402,8 @@
     <dimen name="_98sp">98sp</dimen>
     <dimen name="_99sp">99sp</dimen>
     <dimen name="_100sp">100sp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

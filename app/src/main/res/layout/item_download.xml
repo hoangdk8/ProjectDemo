@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ctn_music"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/img_music"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/img_music"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/img_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play"
+            app:layout_constraintTop_toTopOf="@id/img_music"
+            app:layout_constraintStart_toStartOf="@id/img_music"
+            app:layout_constraintEnd_toEndOf="@id/img_music"
+            app:layout_constraintBottom_toBottomOf="@id/img_music"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/ctn_music"
+        app:layout_constraintEnd_toStartOf="@+id/img_delete"
+        app:layout_constraintStart_toEndOf="@id/ctn_music"
+        app:layout_constraintTop_toTopOf="@id/ctn_music">
+
+        <TextView
+            android:id="@+id/txt_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/bevietnampro_bold"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:text="Wannabe" />
+
+        <TextView
+            android:id="@+id/txt_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.6"
+            android:ellipsize="end"
+            android:fontFamily="@font/bevietnampro_medium"
+            android:singleLine="true"
+            android:textColor="#131313"
+            android:textSize="12sp"
+            tools:text="0:34" />
+    </LinearLayout>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/img_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_delete"
+        app:layout_constraintBottom_toBottomOf="@id/ctn_music"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/ctn_music" />
+</androidx.constraintlayout.widget.ConstraintLayout>

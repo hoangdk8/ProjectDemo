@@ -5,12 +5,11 @@
         <!-- Thiết lập màu nền cho TabLayout -->
         <item name="android:background">@color/white</item>
         <!-- Thiết lập màu chữ cho Tab -->
-        <item name="tabTextColor">@color/black</item>
+        <item name="tabTextColor">#B3B3B3</item>
         <!-- Thiết lập màu chữ cho Tab được chọn -->
-        <item name="tabSelectedTextColor">#B3B3B3</item>
+        <item name="tabSelectedTextColor">@color/black</item>
         <!-- Thiết lập kích thước chữ cho Tab -->
         <item name="tabTextAppearance">@style/TabTextAppearance</item>
-        <!-- Các thuộc tính khác có thể được thiết lập tùy theo nhu cầu của bạn -->
     </style>
 
     <!-- Style cho văn bản trong Tab -->

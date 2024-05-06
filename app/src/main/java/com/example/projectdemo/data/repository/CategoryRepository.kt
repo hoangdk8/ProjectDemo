@@ -11,7 +11,7 @@ class CategoryRepository @Inject constructor(private val apiService: ApiService)
         return apiService.dataCategories()
     }
 
-    suspend fun getListOfCategory(cat: Int): Response<DataDetailCategories> {
-        return apiService.dataDetailCategories(cat)
+    suspend fun getListOfCategory(cat: Int,offset:Int): Response<DataDetailCategories> {
+        return apiService.dataDetailCategories(cat,offset)
     }
 }
