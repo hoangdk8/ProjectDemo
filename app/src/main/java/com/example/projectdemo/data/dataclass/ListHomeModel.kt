@@ -6,5 +6,5 @@ data class ListHomeModel(
     @SerializedName("pageId")
     var pageId: Int,
     @SerializedName("data")
-    val items: List<DataDefaultRings.Data>
+    val items: List<DataDefaultRings.RingTone>
 )

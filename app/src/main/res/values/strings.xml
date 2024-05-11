@@ -4,4 +4,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="taixuong">Tải xuống</string>
+    <string name="txt_banner_1">[KBS] 오아시스 OST</string>
+    <string name="txt_banner_2">[SBS] 낭만닥터 김사부 OST</string>
+    <string name="txt_banner_3">더 글로리 OST</string>
 </resources>

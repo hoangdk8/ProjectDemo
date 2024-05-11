@@ -23,6 +23,8 @@ data class DataCategories(
         @SerializedName("name")
         var name: String?,
         @SerializedName("url")
-        var url: String?
+        var url: String?,
+        @SerializedName("categoryCode")
+        var categoryCode: String?
     )
 }

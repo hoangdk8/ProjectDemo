@@ -4,12 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="#f5f7fa"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintTop_toTopOf="parent" />
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
@@ -20,6 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ctn_play_music"
         android:layout_width="match_parent"
@@ -69,8 +80,8 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:fontFamily="@font/bevietnampro_bold"
-                    android:singleLine="true"
                     android:maxLength="20"
+                    android:singleLine="true"
                     android:text="Build Me Up Buttercup"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
@@ -92,6 +103,7 @@
                         android:text="0:00"
                         android:textColor="#131313"
                         android:textSize="12sp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -102,6 +114,7 @@
                         android:text="/"
                         android:textColor="#131313"
                         android:textSize="12sp" />
+
                     <TextView
                         android:id="@+id/txt_time_max"
                         android:layout_width="wrap_content"
@@ -145,9 +158,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_70dp"
         android:layout_gravity="bottom"
-        app:menu="@menu/menu"
         app:itemActiveIndicatorStyle="@color/white"
         app:itemBackground="@color/white"
         app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/menu" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

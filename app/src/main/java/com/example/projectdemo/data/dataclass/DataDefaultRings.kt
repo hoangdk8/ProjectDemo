@@ -1,11 +1,13 @@
 package com.example.projectdemo.data.dataclass
 
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class DataDefaultRings(
     @SerializedName("data")
-    var `data`: List<Data?>?,
+    var `data`: List<RingTone?>?,
     @SerializedName("message")
     var message: String?,
     @SerializedName("pageId")
@@ -13,7 +15,8 @@ data class DataDefaultRings(
     @SerializedName("status")
     var status: Int?
 ) {
-    data class Data(
+    @Entity(tableName = "music_table")
+    data class RingTone(
         @SerializedName("categories")
         var categories: String?,
         @SerializedName("count")
@@ -24,6 +27,7 @@ data class DataDefaultRings(
         var duration: Int?,
         @SerializedName("hometype")
         var hometype: String?,
+        @PrimaryKey
         @SerializedName("id")
         var id: Int?,
         @SerializedName("isVip")
@@ -31,6 +35,10 @@ data class DataDefaultRings(
         @SerializedName("name")
         var name: String?,
         @SerializedName("url")
-        var url: String?
+        var url: String?,
+        @SerializedName("isFavorite")
+        var isFavorite: Int?,
+        @SerializedName("isDownload")
+        var isDownload: Int?
     )
 }
