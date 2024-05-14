@@ -8,7 +8,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.projectdemo.data.dataclass.BASE_URL_MUSIC
+import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.untils.TimerCountDown
+import com.example.projectdemo.untils.logd
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,17 +20,17 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
     private val exoPlayer: ExoPlayer = ExoPlayer.Builder(context).build()
     private var playerEventListener: PlayerEventListener? = null
     private var playerEventListenerMain: PlayerEventListener? = null
+    private var currentModel : DataDefaultRings.RingTone? = null
     private val handler = Handler(Looper.getMainLooper())
     private var runnable: Runnable? = null
 
     interface PlayerEventListener {
         fun onPlaybackEnded()
-        fun onReadyPlay()
+        fun onReadyPlay(ringTone: DataDefaultRings.RingTone)
         fun onBuffering()
         fun onPlay()
         fun onStopMusic()
         fun onProgress(duration: Long)
-        fun onProgressBar(currentDuration : Long,totalDuration : Long)
     }
 
     fun getPlayer(): ExoPlayer {
@@ -39,13 +41,11 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
         runnable = object : Runnable {
             override fun run() {
                 val currentTime = exoPlayer.currentPosition
-                val totalDuration = exoPlayer.duration
                 playerEventListenerMain?.onProgress(currentTime)
-                playerEventListener?.onProgressBar(currentTime,totalDuration)
-                handler.postDelayed(this, 100)
+                handler.postDelayed(this, 500)
+
             }
         }
-
         handler.post(runnable!!)
     }
 
@@ -58,8 +58,8 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
                 playerEventListener?.onBuffering()
                 playerEventListenerMain?.onBuffering()
             } else if (state == ExoPlayer.STATE_READY) {
-                playerEventListener?.onReadyPlay()
-                playerEventListenerMain?.onReadyPlay()
+                playerEventListener?.onReadyPlay(currentModel!!)
+                playerEventListenerMain?.onReadyPlay(currentModel!!)
             }
         }
 
@@ -69,9 +69,10 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
                 playerEventListener?.onPlay()
                 playerEventListenerMain?.onPlay()
             } else {
+                handler.removeCallbacks(runnable!!)
                 playerEventListener?.onStopMusic()
                 playerEventListenerMain?.onStopMusic()
-                handler.removeCallbacks(runnable!!)
+
             }
 
 
@@ -91,11 +92,12 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
     }
 
 
-    fun playPrepare(url: String) {
-        val mediaItem = MediaItem.fromUri(BASE_URL_MUSIC + url)
+    fun playPrepare(ringTone: DataDefaultRings.RingTone) {
+        val mediaItem = MediaItem.fromUri(BASE_URL_MUSIC + ringTone.url)
         exoPlayer.setMediaItem(mediaItem)
         exoPlayer.prepare()
         exoPlayer.playWhenReady = true
+        currentModel = ringTone
     }
 
     fun play() {
@@ -115,5 +117,9 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
 
     fun release() {
         exoPlayer.release()
+    }
+    fun reload() {
+        exoPlayer.seekTo(0)
+        exoPlayer.play()
     }
 }

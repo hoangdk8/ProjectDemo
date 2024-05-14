@@ -10,9 +10,9 @@ import com.example.projectdemo.databinding.ItemTopBinding
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.ui.home.listener.OnItemClickListener
 import com.example.projectdemo.untils.convertDurationToTimeString
+import com.example.projectdemo.untils.logd
 
-class TopMusicAdapter(private val topDown :List<DataDefaultRings.RingTone>,
-                      private val listener: OnItemClickListener
+class TopMusicAdapter(private val topDown :List<DataDefaultRings.RingTone>
 ) :
     RecyclerView.Adapter<TopMusicAdapter.TopDownViewHolder>() {
     private var hour: String = "00"
@@ -24,8 +24,8 @@ class TopMusicAdapter(private val topDown :List<DataDefaultRings.RingTone>,
             val result = convertDurationToTimeString(ringTone.duration!!)
             hour = result[0]
             minute = result[1]
-            binding.txtTime1.text = "$hour:$minute"
-            binding.txtTitle1.text = ringTone.name
+            binding.txtTime.text = "$hour:$minute"
+            binding.txtTitle.text = ringTone.name
             binding.txtTop.text = (position+1).toString()
             when(position){
                 0 -> binding.txtTop.alpha = 1F
@@ -34,15 +34,10 @@ class TopMusicAdapter(private val topDown :List<DataDefaultRings.RingTone>,
                 else -> binding.txtTop.alpha = 0.3F
 
             }
-            binding.imgStatus1.setImageResource(R.drawable.ic_play)
-            binding.imgStatus1.setOnClickListener {
-                listener.onItemClick(
-                    ringTone.url!!,
-                    ringTone.name!!,
-                    ringTone.duration!!
-                )
+            binding.imgStatus.setImageResource(R.drawable.ic_play)
+            binding.imgStatus.setOnClickListener {
                 selectedPosition = position
-                Log.d("hoang", "bindTopDown: click")
+                "bindTopDown: click".logd()
             }
         }
     }

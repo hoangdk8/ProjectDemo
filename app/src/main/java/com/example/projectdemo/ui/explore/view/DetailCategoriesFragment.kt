@@ -25,11 +25,10 @@ import com.example.projectdemo.untils.EndlessRecyclerViewScrollListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DetailCategoriesFragment : Fragment(), ExploreFragment.OnDataCategories, OnItemClickListener {
+class DetailCategoriesFragment : Fragment() {
     private lateinit var binding: FragmentDetailCategoriesBinding
     private val viewModel: ExploreViewModel by viewModels()
     private lateinit var adapter: DetailCategoriesAdapter
-    private var dataPassListener: HomeFragment.OnDataPass? = null
     var offset = 0
     private lateinit var itemList: MutableList<Any>
 
@@ -44,16 +43,8 @@ class DetailCategoriesFragment : Fragment(), ExploreFragment.OnDataCategories, O
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is HomeFragment.OnDataPass) {
-            dataPassListener = context
-        } else {
-            throw RuntimeException("$context must implement OnDataPass")
-        }
     }
 
-    private fun sendDataToActivity(data: String, title: String, time: Int) {
-        dataPassListener?.onDataPass(data, title, time)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -124,10 +115,5 @@ class DetailCategoriesFragment : Fragment(), ExploreFragment.OnDataCategories, O
         Toast.makeText(requireContext(), "$page", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onDataCategories(id: Int, title: String, count: Int, url: String) {
-    }
 
-    override fun onItemClick(url: String, title: String, time: Int) {
-        sendDataToActivity(url, title, time)
-    }
 }

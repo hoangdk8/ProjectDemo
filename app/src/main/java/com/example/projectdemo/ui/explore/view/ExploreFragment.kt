@@ -25,7 +25,7 @@ import com.example.projectdemo.ui.home.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ExploreFragment : Fragment(), OnClickCategoriesListener, OnItemClickListener {
+class ExploreFragment : Fragment(), OnClickCategoriesListener {
     interface OnDataCategories {
         @SuppressLint("NotConstructor")
         fun onDataCategories(id: Int, title: String, count: Int, url: String)
@@ -34,7 +34,6 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener, OnItemClickListen
     private lateinit var adapterCategories: CategoriesAdapter
     private lateinit var adapterTopDown: TopMusicAdapter
     private var dataPassListener: OnDataCategories? = null
-    private var dataPass: HomeFragment.OnDataPass? = null
     private lateinit var binding: FragmentExploreBinding
     private val viewModel: ExploreViewModel by viewModels()
     private val viewModelHome: HomeViewModel by viewModels()
@@ -53,11 +52,6 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener, OnItemClickListen
     }
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is HomeFragment.OnDataPass) {
-            dataPass = context
-        } else {
-            throw RuntimeException("$context must implement OnDataPass")
-        }
     }
     private fun actionView() {
         binding.seeAllTopDown.setOnClickListener {
@@ -121,7 +115,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener, OnItemClickListen
         viewModelHome.getItemsFilter(0)
         viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "topdown" }
-            adapterTopDown = TopMusicAdapter(data,this)
+            adapterTopDown = TopMusicAdapter(data)
             binding.recyclerviewTopDown.adapter = adapterTopDown
         })
 
@@ -133,7 +127,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener, OnItemClickListen
         viewModelHome.getItemsFilter(0)
         viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "trends" }
-            adapterTopDown = TopMusicAdapter(data,this)
+            adapterTopDown = TopMusicAdapter(data)
             binding.recyclerviewTopTrending.adapter = adapterTopDown
         })
 
@@ -145,7 +139,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener, OnItemClickListen
         viewModelHome.getItemsFilter(0)
         viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "new" }
-            adapterTopDown = TopMusicAdapter(data,this)
+            adapterTopDown = TopMusicAdapter(data)
             binding.recyclerviewNewRingtone.adapter = adapterTopDown
         })
     }
@@ -170,12 +164,6 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener, OnItemClickListen
 
     private fun sendDataToFragment(id: Int, title: String, count: Int, url: String) {
         dataPassListener?.onDataCategories(id, title, count, url)
-    }
-    private fun sendDataToActivity(data: String,title: String,time:Int) {
-        dataPass?.onDataPass(data,title,time)
-    }
-    override fun onItemClick(url: String, title: String, time: Int) {
-        sendDataToActivity(url,title,time)
     }
 
 }

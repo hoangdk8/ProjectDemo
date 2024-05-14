@@ -23,12 +23,11 @@ import com.example.projectdemo.ui.home.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentSeeAll : Fragment(), OnItemClickListener {
+class FragmentSeeAll : Fragment() {
 
     private lateinit var binding: FragmentSeeAllBinding
     private lateinit var adapterTopDown: TopMusicAdapter
     private val viewModelHome: HomeViewModel by viewModels()
-    private var dataPassListener: HomeFragment.OnDataPass? = null
     private var currentPage = 0
     private lateinit var itemList: MutableList<Any>
 
@@ -43,16 +42,8 @@ class FragmentSeeAll : Fragment(), OnItemClickListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is HomeFragment.OnDataPass) {
-            dataPassListener = context
-        } else {
-            throw RuntimeException("$context must implement OnDataPass")
-        }
     }
 
-    private fun sendDataToActivity(data: String, title: String, time: Int) {
-        dataPassListener?.onDataPass(data, title, time)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,7 +73,7 @@ class FragmentSeeAll : Fragment(), OnItemClickListener {
             val data = it.filter { it.hometype == homeType }
             itemList.addAll(data)
             Log.d("hoang", "setupViews:$currentPage ")
-            adapterTopDown = TopMusicAdapter(itemList as List<DataDefaultRings.RingTone>, this@FragmentSeeAll)
+            adapterTopDown = TopMusicAdapter(itemList as List<DataDefaultRings.RingTone>)
             adapterTopDown.notifyDataSetChanged()
             val layoutManager = binding.recyclerViewSeeAllTopDownload.layoutManager as LinearLayoutManager
             val lastVisiblePosition = layoutManager.findFirstVisibleItemPosition()
@@ -107,8 +98,5 @@ class FragmentSeeAll : Fragment(), OnItemClickListener {
         viewModelHome.getItemsFilter(page)
     }
 
-    override fun onItemClick(url: String, title: String, time: Int) {
-        sendDataToActivity(url, title, time)
-    }
 
 }

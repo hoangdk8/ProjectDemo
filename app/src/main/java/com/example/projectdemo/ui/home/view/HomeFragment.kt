@@ -32,27 +32,18 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), OnItemClickListener {
-    interface OnDataPass {
-        fun onDataPass(data: String, title: String, time: Int)
-    }
+class HomeFragment : Fragment() {
     @Inject
     lateinit var exoPlayerManager: ExoPlayerManager
     private lateinit var adapter: HomeAdapter
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var exoPlayer: ExoPlayer
-    private var dataPassListener: OnDataPass? = null
 
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         eventBusRegister()
-        if (context is OnDataPass) {
-            dataPassListener = context
-        } else {
-            throw RuntimeException("$context must implement OnDataPass")
-        }
     }
 
     override fun onCreateView(
@@ -68,10 +59,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         exoPlayer = ExoPlayer.Builder(requireActivity()).build()
-    }
-
-    private fun sendDataToActivity(data: String, title: String, time: Int) {
-        dataPassListener?.onDataPass(data, title, time)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -92,9 +79,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 binding.loading.visibility = View.GONE
             }
 
-            adapter.onClickItemListener {
-                sendDataToActivity(it.url ?: "", it.name ?: "", it.duration ?: 0)
-            }
         })
         val layoutManager = LinearLayoutManager(requireContext())
         binding.mainRecyclerView.layoutManager = layoutManager
@@ -142,12 +126,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
         viewModel.getItems(page)
         Toast.makeText(requireActivity(), "$page", Toast.LENGTH_SHORT).show()
     }
-
-
-    override fun onItemClick(url: String, title: String, time: Int) {
-        sendDataToActivity(url, title, time)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         eventBusUnRegister()

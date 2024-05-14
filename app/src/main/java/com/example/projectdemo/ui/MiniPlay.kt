@@ -1,89 +1,68 @@
 package com.example.projectdemo.ui
 
-import android.content.Context
-import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.annotation.SuppressLint
 import com.example.projectdemo.ExoPlayerManager
 import com.example.projectdemo.R
+import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.databinding.MiniPlayBinding
 import com.example.projectdemo.event.EventHideMiniPlay
-import com.example.projectdemo.event.EventMiniPlay
-import com.example.projectdemo.ui.home.view.HomeFragment
 import com.example.projectdemo.untils.convertDurationToTimeString
 import com.example.projectdemo.untils.eventBusPost
-import com.example.projectdemo.untils.eventBusRegister
-import com.example.projectdemo.untils.eventBusUnRegister
-import org.greenrobot.eventbus.Subscribe
-import javax.inject.Inject
+import com.example.projectdemo.untils.gone
+import com.example.projectdemo.untils.visible
 
-class MiniPlay @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
-
-    ) : ConstraintLayout(context, attrs, defStyleAttr),
+class MiniPlay(
+    var binding: MiniPlayBinding, private val exoPlayerManager: ExoPlayerManager
+) :
     ExoPlayerManager.PlayerEventListener {
-    @Inject
-    lateinit var exoPlayerManager: ExoPlayerManager
     private var isPlay = true
     private var seconds = 0
     private var minute: String = ""
     private var second: String = ""
-    private var oldItem = 0
-
-    private var binding: MiniPlayBinding =
-        MiniPlayBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
-        eventBusRegister()
         exoPlayerManager.setPlayerEventListenerMain(this)
-        onFinishInflate()
+        actionClick()
     }
 
-    override fun onFinishInflate() {
-        super.onFinishInflate()
-        binding = MiniPlayBinding.bind(this)
-
-
-        @Subscribe
-        fun onMiniPlay(event: EventMiniPlay) {
-            //setupViews sau khi click
-            val result = convertDurationToTimeString(event.time)
-            minute = result[0]
-            second = result[1]
-            seconds = 0
-            binding.txtTimeMax.text = "$minute:$second"
-            binding.txtTitle.text = event.title
-
-            val exoPlayer = exoPlayerManager.getPlayer()
-
-            binding.imgPlay.setOnClickListener {
-                isPlay = !isPlay
-                if (isPlay) {
-                    binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
-                    exoPlayer.play()
-                } else {
-                    exoPlayer.pause()
-                    binding.imgPlay.setImageResource(R.drawable.ic_play_black)
-                }
+    private fun actionClick() {
+        binding.imgPlay.setOnClickListener {
+            isPlay = !isPlay
+            if (isPlay) {
+                binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
+                exoPlayerManager.play()
+            } else {
+                exoPlayerManager.pause()
+                binding.imgPlay.setImageResource(R.drawable.ic_play_black)
             }
-            binding.imgClose.setOnClickListener {
-                seconds = second.toInt()
-                exoPlayer.stop()
-                eventBusPost(EventHideMiniPlay())
-            }
+        }
+        binding.imgClose.setOnClickListener {
+            seconds = second.toInt()
+            binding.root.gone()
+            exoPlayerManager.stop()
+            eventBusPost(EventHideMiniPlay())
         }
     }
 
     override fun onPlaybackEnded() {
+        binding.root.gone()
         binding.imgPlay.setImageResource(R.drawable.ic_play_black)
         binding.imgPlay.setOnClickListener {
             binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
             seconds = 0
+//            exoPlayerManager.reload()
         }
+
     }
 
-    override fun onReadyPlay() {
+    override fun onReadyPlay(ringTone: DataDefaultRings.RingTone) {
+        binding.root.visible()
+        binding.txtTitle.text = ringTone.name
+        val result = convertDurationToTimeString(ringTone.duration!!)
+        minute = result[0]
+        second = result[1]
+        seconds = 0
+        binding.txtTimeMax.text = "$minute:$second"
     }
 
     override fun onBuffering() {
@@ -100,6 +79,7 @@ class MiniPlay @JvmOverloads constructor(
         isPlay = false
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onProgress(duration: Long) {
         val result = convertDurationToTimeString(duration.toInt())
         minute = result[0]
@@ -107,12 +87,5 @@ class MiniPlay @JvmOverloads constructor(
         binding.txtTimeCurrent.text = "$minute:$second"
     }
 
-    override fun onProgressBar(currentDuration: Long, totalDuration: Long) {
-    }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-
-        eventBusUnRegister()
-    }
 }

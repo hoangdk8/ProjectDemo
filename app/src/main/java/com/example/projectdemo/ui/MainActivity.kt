@@ -2,7 +2,6 @@ package com.example.projectdemo.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -14,7 +13,6 @@ import com.example.projectdemo.event.EventPlayDetailMusic
 import com.example.projectdemo.event.EventVisibleView
 import com.example.projectdemo.ui.home.adapter.MyPagerAdapter
 import com.example.projectdemo.ui.home.view.HomeFragment
-import com.example.projectdemo.untils.convertDurationToTimeString
 import com.example.projectdemo.untils.eventBusRegister
 import com.example.projectdemo.untils.eventBusUnRegister
 import com.example.projectdemo.untils.gone
@@ -25,15 +23,11 @@ import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
-    ExoPlayerManager.PlayerEventListener {
+class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var exoPlayerManager: ExoPlayerManager
     private lateinit var binding: ActivityMainBinding
-    private var isPlay = true
-    private var seconds = 0
-    private var minute: String = ""
-    private var second: String = ""
+    private lateinit var miniPlay: MiniPlay
     private var oldItem = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +36,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
         setContentView(binding.root)
         setupViews()
         eventBusRegister()
-        exoPlayerManager.setPlayerEventListenerMain(this)
+        miniPlay = MiniPlay(binding.ctnPlayMusic, exoPlayerManager)
     }
 
     private fun setupViews() {
@@ -51,7 +45,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
 
     @Subscribe
     fun playDetailMusic(event: EventPlayDetailMusic) {
-        binding.ctnPlayMusic.gone()
+        binding.ctnPlayMusic.root.gone()
     }
 
     @Subscribe
@@ -124,78 +118,6 @@ class MainActivity : AppCompatActivity(), HomeFragment.OnDataPass,
                 }
             }
         })
-    }
-
-    @SuppressLint("SetTextI18n")
-    override fun onDataPass(data: String, title: String, time: Int) {
-
-        binding.ctnPlayMusic.visibility = View.VISIBLE
-        //setupViews sau khi click
-        val result = convertDurationToTimeString(time)
-        minute = result[0]
-        second = result[1]
-        seconds = 0
-        binding.txtTimeMax.text = "$minute:$second"
-        binding.txtTitle.text = title
-
-        //setup exoplayer
-        //Đếm thời gian
-        val exoPlayer = exoPlayerManager.getPlayer()
-
-        binding.imgPlay.setOnClickListener {
-            isPlay = !isPlay
-            if (isPlay) {
-                binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
-                exoPlayer.play()
-            } else {
-                exoPlayer.pause()
-                binding.imgPlay.setImageResource(R.drawable.ic_play_black)
-            }
-        }
-        binding.imgClose.setOnClickListener {
-            seconds = second.toInt()
-            exoPlayer.stop()
-            binding.ctnPlayMusic.visibility = View.GONE
-        }
-    }
-
-
-    override fun onPlaybackEnded() {
-        Log.d("hoang", "onPlaybackEnded: ")
-        binding.imgPlay.setImageResource(R.drawable.ic_play_black)
-        binding.imgPlay.setOnClickListener {
-            binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
-            seconds = 0
-        }
-    }
-
-    override fun onReadyPlay() {
-    }
-
-    override fun onBuffering() {
-    }
-
-    override fun onPlay() {
-        binding.imgPlay.setImageResource(R.drawable.ic_pause_black)
-        exoPlayerManager.countTimer()
-        isPlay = true
-    }
-
-    override fun onStopMusic() {
-        binding.imgPlay.setImageResource(R.drawable.ic_play_black)
-        isPlay = false
-    }
-
-    @SuppressLint("SetTextI18n")
-    override fun onProgress(duration: Long) {
-        val result = convertDurationToTimeString(duration.toInt())
-        minute = result[0]
-        second = result[1]
-        binding.txtTimeCurrent.text = "$minute:$second"
-    }
-
-    override fun onProgressBar(currentDuration: Long, totalDuration: Long) {
-
     }
 
 }

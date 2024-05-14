@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:paddingHorizontal="16dp"
     >
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ctn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp">
+        android:paddingVertical="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ctn_music"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/img_music_1"
+                android:id="@+id/img_music"
                 android:layout_width="58dp"
                 android:layout_height="58dp"
                 android:scaleType="fitXY"
@@ -34,34 +40,66 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/img_status_1"
+                android:id="@+id/img_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_play"
-                app:layout_constraintBottom_toBottomOf="@id/img_music_1"
-                app:layout_constraintEnd_toEndOf="@id/img_music_1"
-                app:layout_constraintStart_toStartOf="@id/img_music_1"
-                app:layout_constraintTop_toTopOf="@id/img_music_1" />
+                app:layout_constraintBottom_toBottomOf="@id/img_music"
+                app:layout_constraintEnd_toEndOf="@id/img_music"
+                app:layout_constraintStart_toStartOf="@id/img_music"
+                app:layout_constraintTop_toTopOf="@id/img_music" />
+            <ProgressBar
+                android:id="@+id/loading"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:indeterminateTint="@color/white"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/img_status"
+                app:layout_constraintEnd_toEndOf="@id/img_status"
+                app:layout_constraintStart_toStartOf="@id/img_status"
+                app:layout_constraintTop_toTopOf="@id/img_status" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="5dp"
+            android:layout_marginStart="-5dp"
+            android:progressBackgroundTint="#B1B0AD"
+            android:progressDrawable="@drawable/bg_progressbar"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/ctn"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout"
+            app:layout_constraintTop_toTopOf="@+id/ctn" />
         <TextView
             android:id="@+id/txt_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bevietnampro_bold"
-            android:textSize="20sp"
+            android:text="1"
             android:textColor="@color/black"
-            android:layout_marginStart="10dp"
-            android:text="1" />
+            android:layout_marginStart="5dp"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ctn_music"
+            app:layout_constraintStart_toEndOf="@+id/ctn_music"
+            app:layout_constraintTop_toTopOf="@+id/ctn_music" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/txt_top"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/txt_title_1"
+                android:id="@+id/txt_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -72,7 +110,7 @@
                 tools:text="Wannabe" />
 
             <TextView
-                android:id="@+id/txt_time_1"
+                android:id="@+id/txt_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -83,5 +121,5 @@
                 android:textSize="12sp"
                 tools:text="0:34" />
         </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
