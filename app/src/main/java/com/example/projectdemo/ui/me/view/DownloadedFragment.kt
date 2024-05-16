@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.projectdemo.databinding.FragmentDownloadedBinding
-import com.example.projectdemo.event.EventUnDownload
+import com.example.projectdemo.listener.eventbus.EventUnDownload
 import com.example.projectdemo.ui.me.adapter.DownloadAdapter
 import com.example.projectdemo.ui.me.viewmodel.DownloadViewModel
 import com.example.projectdemo.untils.eventBusRegister

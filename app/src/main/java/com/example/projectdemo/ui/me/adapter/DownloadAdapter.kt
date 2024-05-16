@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.R
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.databinding.ItemDownloadBinding
-import com.example.projectdemo.event.EventUnDownload
+import com.example.projectdemo.listener.eventbus.EventUnDownload
 import com.example.projectdemo.untils.convertDurationToTimeString
 import com.example.projectdemo.untils.eventBusPost
 

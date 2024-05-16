@@ -11,7 +11,7 @@ import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.data.dataclass.DataItem
 import com.example.projectdemo.data.dataclass.DataItemType
 import com.example.projectdemo.data.dataclass.MusicBanner
-import com.example.projectdemo.data.repository.HomeRepository
+import com.example.projectdemo.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber

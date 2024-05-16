@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.projectdemo.data.dataclass.DataCategories
-import com.example.projectdemo.data.dataclass.DataDetailCategories
-import com.example.projectdemo.data.repository.CategoryRepository
+import com.example.projectdemo.data.dataclass.DataDefaultRings
+import com.example.projectdemo.repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -19,11 +19,11 @@ class ExploreViewModel @Inject constructor(
     private val _data = MutableLiveData<List<DataCategories.Data>?>()
     val data: LiveData<List<DataCategories.Data>?> get() = _data
 
-    private val _dataDetail = MutableLiveData<List<DataDetailCategories.Data>>()
-    val dataDetail: LiveData<List<DataDetailCategories.Data>> get() = _dataDetail
+    private val _dataDetail = MutableLiveData<List<DataDefaultRings.RingTone>>()
+    val dataDetail: LiveData<List<DataDefaultRings.RingTone>> get() = _dataDetail
 
-    private val _hasNext = MutableLiveData<DataDetailCategories>()
-    val hasNext: LiveData<DataDetailCategories> get() = _hasNext
+    private val _hasNext = MutableLiveData<DataDefaultRings>()
+    val hasNext: LiveData<DataDefaultRings> get() = _hasNext
 
     private val _categoryCode = MutableLiveData<DataCategories.Data>()
     val categoryCode: LiveData<DataCategories.Data> get() = _categoryCode
@@ -71,7 +71,7 @@ class ExploreViewModel @Inject constructor(
                 val response = categoryRepository.getListOfCategory(cat,offset)
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        val newData = it.data as List<DataDetailCategories.Data>
+                        val newData = it.data as List<DataDefaultRings.RingTone>
                         val currentData = _dataDetail.value.orEmpty().toMutableList()
                         currentData.addAll(newData)
                         _dataDetail.value = currentData

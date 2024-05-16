@@ -11,32 +11,42 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.R
+import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.databinding.FragmentExploreBinding
+import com.example.projectdemo.listener.DetailPlayMusic
+import com.example.projectdemo.listener.eventbus.EventRefreshExplore
+import com.example.projectdemo.ui.detailplaymusic.DetailPlayMusicFragment
 import com.example.projectdemo.ui.explore.adapter.CategoriesAdapter
 import com.example.projectdemo.ui.explore.adapter.TopMusicAdapter
 import com.example.projectdemo.ui.explore.listener.OnClickCategoriesListener
 import com.example.projectdemo.ui.explore.viewmodel.ExploreViewModel
-import com.example.projectdemo.ui.home.view.HomeFragment
-import com.example.projectdemo.ui.home.listener.OnItemClickListener
 import com.example.projectdemo.ui.home.viewmodel.HomeViewModel
+import com.example.projectdemo.untils.eventBusRegister
+import com.example.projectdemo.untils.eventBusUnRegister
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.Subscribe
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class ExploreFragment : Fragment(), OnClickCategoriesListener {
+class ExploreFragment : Fragment(), OnClickCategoriesListener,DetailPlayMusic {
     interface OnDataCategories {
         @SuppressLint("NotConstructor")
         fun onDataCategories(id: Int, title: String, count: Int, url: String)
     }
-
+    @Inject
+    lateinit var exoPlayerManager: ExoPlayerManager
     private lateinit var adapterCategories: CategoriesAdapter
     private lateinit var adapterTopDown: TopMusicAdapter
     private var dataPassListener: OnDataCategories? = null
     private lateinit var binding: FragmentExploreBinding
     private val viewModel: ExploreViewModel by viewModels()
     private val viewModelHome: HomeViewModel by viewModels()
+    private lateinit var exoPlayer: ExoPlayer
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,9 +59,11 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         actionView()
+        exoPlayer = ExoPlayer.Builder(requireActivity()).build()
     }
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        eventBusRegister()
     }
     private fun actionView() {
         binding.seeAllTopDown.setOnClickListener {
@@ -115,7 +127,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.getItemsFilter(0)
         viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "topdown" }
-            adapterTopDown = TopMusicAdapter(data)
+            adapterTopDown = TopMusicAdapter(data,exoPlayerManager,this)
             binding.recyclerviewTopDown.adapter = adapterTopDown
         })
 
@@ -127,7 +139,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.getItemsFilter(0)
         viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "trends" }
-            adapterTopDown = TopMusicAdapter(data)
+            adapterTopDown = TopMusicAdapter(data,exoPlayerManager,this)
             binding.recyclerviewTopTrending.adapter = adapterTopDown
         })
 
@@ -139,7 +151,7 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         viewModelHome.getItemsFilter(0)
         viewModelHome.itemListFilter.observe(requireActivity(), Observer { it ->
             val data = it.filter { it.hometype == "new" }
-            adapterTopDown = TopMusicAdapter(data)
+            adapterTopDown = TopMusicAdapter(data,exoPlayerManager,this)
             binding.recyclerviewNewRingtone.adapter = adapterTopDown
         })
     }
@@ -161,9 +173,38 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener {
         fragmentTransaction.replace(R.id.fragment_container_view, fragment)
         fragmentTransaction.commit()
     }
-
+    @Subscribe
+    fun onEvent(event: EventRefreshExplore) {
+//        val layoutManager = binding.mainRecyclerView.layoutManager as LinearLayoutManager
+//            layoutManager.scrollToPosition(0)
+    }
     private fun sendDataToFragment(id: Int, title: String, count: Int, url: String) {
         dataPassListener?.onDataCategories(id, title, count, url)
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        eventBusUnRegister()
+    }
 
+    override fun onShowDetailsMusic(ringTone: DataDefaultRings.RingTone) {
+        val bundle = Bundle().apply {
+            putInt("id", ringTone.id!!)
+            putString("name", ringTone.name)
+            putString("categories", ringTone.categories)
+            putInt("duration", ringTone.duration!!)
+            putInt("count", ringTone.count!!)
+            putString("url", ringTone.url)
+            putString("hometype", ringTone.hometype)
+            putInt("isVip", ringTone.isVip!!)
+            putString("datatype", ringTone.datatype)
+            putBoolean("online", ringTone.online == true)
+        }
+        val fragment = DetailPlayMusicFragment()
+        fragment.arguments = bundle
+        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.setCustomAnimations(R.anim.anim_left_in, R.anim.anim_left_out)
+        fragmentTransaction.replace(R.id.fragment_container, fragment)
+        fragmentTransaction.commit()
+    }
 }

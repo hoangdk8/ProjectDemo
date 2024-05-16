@@ -10,19 +10,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.projectdemo.R
-import com.example.projectdemo.data.dataclass.BASE_URL_MUSIC
+import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.databinding.FragmentDetailPlayMusicBinding
-import com.example.projectdemo.event.EventVisibleView
+import com.example.projectdemo.listener.PlayerEventListener
+import com.example.projectdemo.listener.eventbus.EventNotifyDataSetChanged
+import com.example.projectdemo.listener.eventbus.EventVisibleView
 import com.example.projectdemo.untils.eventBusPost
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailPlayMusicFragment : Fragment() {
+class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
+    @Inject
+    lateinit var exoPlayerManager: ExoPlayerManager
     private lateinit var binding: FragmentDetailPlayMusicBinding
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaItem: MediaItem
@@ -34,7 +38,7 @@ class DetailPlayMusicFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         exoPlayer = ExoPlayer.Builder(requireActivity()).build()
-
+        exoPlayerManager.setPlayerEventListener(this)
     }
 
     override fun onCreateView(
@@ -58,6 +62,8 @@ class DetailPlayMusicFragment : Fragment() {
                 fragmentManager.beginTransaction().remove(currentFragment).commit()
             }
             eventBusPost(EventVisibleView())
+            eventBusPost(EventNotifyDataSetChanged())
+            exoPlayerManager.stop()
         }
 
         val arguments = arguments
@@ -70,38 +76,17 @@ class DetailPlayMusicFragment : Fragment() {
         val hometype = arguments?.getString("hometype")
         val isVip = arguments?.getInt("isVip")
         val datatype = arguments?.getString("datatype")
+        val online = arguments?.getBoolean("online")
 
         binding.txtTitle.text = name
-        mediaItem = MediaItem.fromUri(BASE_URL_MUSIC + url)
-        exoPlayer.setMediaItem(mediaItem)
-        exoPlayer.prepare()
-        exoPlayer.playWhenReady = true
-        exoPlayer.play()
-        exoPlayer.addListener(object : Player.Listener {
-            override fun onPlaybackStateChanged(state: Int) {
-                super.onPlaybackStateChanged(state)
-                if (state == Player.STATE_ENDED) {
-                    binding.imgPlay.setOnClickListener {
-                        exoPlayer.setMediaItem(mediaItem)
-                        exoPlayer.play()
-                    }
-                } else if (state == Player.STATE_BUFFERING)
-                    if (state == Player.STATE_ENDED || state == Player.STATE_IDLE) {
-                        binding.imgPlay.setOnClickListener {
-                            exoPlayer.setMediaItem(mediaItem)
-                        }
-                    }
-            }
-
-        })
         binding.imgPlay.setOnClickListener {
             isPlay = !isPlay
             if (isPlay) {
                 binding.imgPlay.setImageResource(R.drawable.ic_pause_detail)
-                exoPlayer.play()
+                exoPlayerManager.play()
             } else {
                 binding.imgPlay.setImageResource(R.drawable.ic_detail_play)
-                exoPlayer.stop()
+                exoPlayerManager.pause()
             }
         }
 
@@ -120,7 +105,6 @@ class DetailPlayMusicFragment : Fragment() {
                 }
             }
             viewModel.getIsDownloadById(id!!).observe(viewLifecycleOwner) {
-                Toast.makeText(requireActivity(), "$it", Toast.LENGTH_SHORT).show()
                 when (it) {
                     0 -> {
                         isDownload = false
@@ -132,7 +116,7 @@ class DetailPlayMusicFragment : Fragment() {
                 }
             }
         }
-        fun addMusicDb(){
+        fun addMusicDb() {
             lifecycleScope.launch {
                 viewModel.addMusic(
                     DataDefaultRings.RingTone(
@@ -145,7 +129,8 @@ class DetailPlayMusicFragment : Fragment() {
                         isVip,
                         name,
                         url,
-                        0, 0
+                        online,
+                        0, 0, 0
                     )
                 )
             }
@@ -188,5 +173,23 @@ class DetailPlayMusicFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         exoPlayer.stop()
+    }
+
+    override fun onPlaybackEnded() {
+    }
+
+    override fun onReadyPlay(ringTone: DataDefaultRings.RingTone) {
+    }
+
+    override fun onBuffering() {
+    }
+
+    override fun onPlay() {
+    }
+
+    override fun onStopMusic() {
+    }
+
+    override fun onProgress(duration: Long) {
     }
 }

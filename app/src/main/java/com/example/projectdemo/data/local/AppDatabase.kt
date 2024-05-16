@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 import javax.inject.Provider
 
-@Database(entities = [DataDefaultRings.RingTone::class], version = 1)
+@Database(entities = [DataDefaultRings.RingTone::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun musicDao(): MusicDao
 

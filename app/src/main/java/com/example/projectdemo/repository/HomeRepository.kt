@@ -1,4 +1,4 @@
-package com.example.projectdemo.data.repository
+package com.example.projectdemo.repository
 
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.data.dataclass.ListHomeModel

@@ -1,14 +1,13 @@
 package com.example.projectdemo.ui.me.adapter
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.R
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.databinding.ItemFavoritesBinding
-import com.example.projectdemo.event.EventUnFavorite
+import com.example.projectdemo.listener.eventbus.EventUnFavorite
 import com.example.projectdemo.untils.convertDurationToTimeString
 import com.example.projectdemo.untils.eventBusPost
 

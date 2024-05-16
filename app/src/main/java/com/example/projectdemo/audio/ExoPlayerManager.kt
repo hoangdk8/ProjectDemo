@@ -1,16 +1,14 @@
-package com.example.projectdemo
+package com.example.projectdemo.audio
 
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.projectdemo.data.dataclass.BASE_URL_MUSIC
 import com.example.projectdemo.data.dataclass.DataDefaultRings
-import com.example.projectdemo.untils.TimerCountDown
-import com.example.projectdemo.untils.logd
+import com.example.projectdemo.listener.PlayerEventListener
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,14 +22,6 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
     private val handler = Handler(Looper.getMainLooper())
     private var runnable: Runnable? = null
 
-    interface PlayerEventListener {
-        fun onPlaybackEnded()
-        fun onReadyPlay(ringTone: DataDefaultRings.RingTone)
-        fun onBuffering()
-        fun onPlay()
-        fun onStopMusic()
-        fun onProgress(duration: Long)
-    }
 
     fun getPlayer(): ExoPlayer {
         return exoPlayer
@@ -74,8 +64,6 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
                 playerEventListenerMain?.onStopMusic()
 
             }
-
-
         }
     }
 

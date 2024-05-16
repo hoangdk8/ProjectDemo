@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.projectdemo.databinding.FragmentFavoritesBinding
-import com.example.projectdemo.event.EventUnFavorite
+import com.example.projectdemo.listener.eventbus.EventUnFavorite
 import com.example.projectdemo.ui.me.adapter.FavoritesAdapter
 import com.example.projectdemo.ui.me.viewmodel.FavoritesViewModel
 import com.example.projectdemo.untils.eventBusRegister

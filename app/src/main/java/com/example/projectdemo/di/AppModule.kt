@@ -1,7 +1,7 @@
 package com.example.projectdemo.di
 
 import android.content.Context
-import com.example.projectdemo.ExoPlayerManager
+import com.example.projectdemo.audio.ExoPlayerManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

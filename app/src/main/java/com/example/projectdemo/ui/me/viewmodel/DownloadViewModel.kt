@@ -1,7 +1,7 @@
 package com.example.projectdemo.ui.me.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.projectdemo.data.repository.HomeRepository
+import com.example.projectdemo.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

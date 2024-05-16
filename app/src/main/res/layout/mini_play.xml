@@ -5,10 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:focusable="true"
+    android:clickable="true"
     android:background="@drawable/bg_play_music"
     android:orientation="horizontal"
     android:visibility="visible"
-    app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
+    app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+    >
 
 
     <ImageView

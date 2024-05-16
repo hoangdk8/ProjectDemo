@@ -1,21 +1,20 @@
 package com.example.projectdemo.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.example.projectdemo.ExoPlayerManager
+import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.R
 import com.example.projectdemo.databinding.ActivityMainBinding
-import com.example.projectdemo.event.EventGoneView
-import com.example.projectdemo.event.EventPlayDetailMusic
-import com.example.projectdemo.event.EventVisibleView
+import com.example.projectdemo.listener.eventbus.EventGoneView
+import com.example.projectdemo.listener.eventbus.EventShowMiniPlay
+import com.example.projectdemo.listener.eventbus.EventVisibleView
 import com.example.projectdemo.ui.home.adapter.MyPagerAdapter
-import com.example.projectdemo.ui.home.view.HomeFragment
 import com.example.projectdemo.untils.eventBusRegister
 import com.example.projectdemo.untils.eventBusUnRegister
 import com.example.projectdemo.untils.gone
+import com.example.projectdemo.untils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.Subscribe
 import javax.inject.Inject
@@ -44,15 +43,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Subscribe
-    fun playDetailMusic(event: EventPlayDetailMusic) {
-        binding.ctnPlayMusic.root.gone()
-    }
-
-    @Subscribe
     fun goneView(event: EventGoneView) {
         binding.bottomNavigation.visibility = View.GONE
+        binding.ctnPlayMusic.root.gone()
     }
-
+    @Subscribe
+    fun showView(event: EventShowMiniPlay) {
+        binding.ctnPlayMusic.root.visible()
+    }
     @Subscribe
     fun visibleView(event: EventVisibleView) {
         binding.bottomNavigation.visibility = View.VISIBLE

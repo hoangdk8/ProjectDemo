@@ -9,28 +9,40 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.R
 import com.example.projectdemo.data.dataclass.BASE_URL_IMAGE
+import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.databinding.FragmentDetailCategoriesBinding
+import com.example.projectdemo.listener.DetailPlayMusic
+import com.example.projectdemo.listener.eventbus.EventRefreshSeeAll
+import com.example.projectdemo.ui.detailplaymusic.DetailPlayMusicFragment
 import com.example.projectdemo.ui.explore.adapter.DetailCategoriesAdapter
 import com.example.projectdemo.ui.explore.viewmodel.ExploreViewModel
-import com.example.projectdemo.ui.home.view.HomeFragment
-import com.example.projectdemo.ui.home.listener.OnItemClickListener
 import com.example.projectdemo.untils.EndlessRecyclerViewScrollListener
+import com.example.projectdemo.untils.eventBusRegister
+import com.example.projectdemo.untils.eventBusUnRegister
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.Subscribe
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailCategoriesFragment : Fragment() {
+class DetailCategoriesFragment : Fragment(),DetailPlayMusic {
+    @Inject
+    lateinit var exoPlayerManager: ExoPlayerManager
     private lateinit var binding: FragmentDetailCategoriesBinding
     private val viewModel: ExploreViewModel by viewModels()
     private lateinit var adapter: DetailCategoriesAdapter
     var offset = 0
     private lateinit var itemList: MutableList<Any>
+    private lateinit var exoPlayer: ExoPlayer
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +55,7 @@ class DetailCategoriesFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        eventBusRegister()
     }
 
 
@@ -60,6 +73,7 @@ class DetailCategoriesFragment : Fragment() {
             }
         }
         setupViews()
+        exoPlayer = ExoPlayer.Builder(requireActivity()).build()
     }
 
     @SuppressLint("SetTextI18n")
@@ -83,7 +97,7 @@ class DetailCategoriesFragment : Fragment() {
         viewModel.fetchDataDetail(id!!, offset)
         viewModel.dataDetail.observe(requireActivity(), Observer { it ->
             itemList.addAll(it)
-            adapter = DetailCategoriesAdapter(itemList)
+            adapter = DetailCategoriesAdapter(itemList,exoPlayerManager,this)
             adapter.notifyDataSetChanged()
             val layoutManager = binding.recyclerViewDetail.layoutManager as LinearLayoutManager
             val lastVisiblePosition = layoutManager.findFirstVisibleItemPosition()
@@ -109,11 +123,40 @@ class DetailCategoriesFragment : Fragment() {
 
         })
     }
-
+    @Subscribe
+    fun onEvent(event: EventRefreshSeeAll) {
+//        val layoutManager = binding.mainRecyclerView.layoutManager as LinearLayoutManager
+//            layoutManager.scrollToPosition(0)
+    }
     private fun loadMoreData(id: Int, page: Int) {
         viewModel.fetchDataDetail(id, page)
         Toast.makeText(requireContext(), "$page", Toast.LENGTH_SHORT).show()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        eventBusUnRegister()
+    }
 
+    override fun onShowDetailsMusic(ringTone: DataDefaultRings.RingTone) {
+        val bundle = Bundle().apply {
+            putInt("id", ringTone.id!!)
+            putString("name", ringTone.name)
+            putString("categories", ringTone.categories)
+            putInt("duration", ringTone.duration!!)
+            putInt("count", ringTone.count!!)
+            putString("url", ringTone.url)
+            putString("hometype", ringTone.hometype)
+            putInt("isVip", ringTone.isVip!!)
+            putString("datatype", ringTone.datatype)
+            putBoolean("online", ringTone.online == true)
+        }
+        val fragment = DetailPlayMusicFragment()
+        fragment.arguments = bundle
+        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.setCustomAnimations(R.anim.anim_left_in, R.anim.anim_left_out)
+        fragmentTransaction.replace(R.id.fragment_container, fragment)
+        fragmentTransaction.commit()
+    }
 }

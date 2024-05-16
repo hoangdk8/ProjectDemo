@@ -1,7 +1,7 @@
-package com.example.projectdemo.data.repository
+package com.example.projectdemo.repository
 
 import com.example.projectdemo.data.dataclass.DataCategories
-import com.example.projectdemo.data.dataclass.DataDetailCategories
+import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.domain.ApiService
 import retrofit2.Response
 import javax.inject.Inject
@@ -11,7 +11,7 @@ class CategoryRepository @Inject constructor(private val apiService: ApiService)
         return apiService.dataCategories()
     }
 
-    suspend fun getListOfCategory(cat: Int,offset:Int): Response<DataDetailCategories> {
+    suspend fun getListOfCategory(cat: Int,offset:Int): Response<DataDefaultRings> {
         return apiService.dataDetailCategories(cat,offset)
     }
 }

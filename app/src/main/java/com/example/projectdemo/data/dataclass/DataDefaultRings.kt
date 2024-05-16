@@ -8,8 +8,12 @@ import com.google.gson.annotations.SerializedName
 data class DataDefaultRings(
     @SerializedName("data")
     var `data`: List<RingTone?>?,
+    @SerializedName("hasnext")
+    var hasnext: Boolean?,
     @SerializedName("message")
     var message: String?,
+    @SerializedName("nextoffset")
+    var nextoffset: Int?,
     @SerializedName("pageId")
     var pageId: String?,
     @SerializedName("status")
@@ -36,9 +40,13 @@ data class DataDefaultRings(
         var name: String?,
         @SerializedName("url")
         var url: String?,
+        @SerializedName("online")
+        var online: Boolean?,
         @SerializedName("isFavorite")
         var isFavorite: Int?,
         @SerializedName("isDownload")
-        var isDownload: Int?
+        var isDownload: Int?,
+        @SerializedName("colections")
+        var collections:Int?
     )
 }

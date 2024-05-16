@@ -1,9 +1,9 @@
 package com.example.projectdemo.di
 
-import com.example.projectdemo.data.repository.CategoryRepository
+import com.example.projectdemo.repository.CategoryRepository
 import com.example.projectdemo.domain.ApiService
 import com.example.projectdemo.data.dataclass.BASE_URL_API
-import com.example.projectdemo.data.repository.HomeRepository
+import com.example.projectdemo.repository.HomeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
