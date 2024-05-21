@@ -32,8 +32,8 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
             override fun run() {
                 val currentTime = exoPlayer.currentPosition
                 playerEventListenerMain?.onProgress(currentTime)
-                handler.postDelayed(this, 500)
-
+                playerEventListener?.onProgress(currentTime)
+                handler.postDelayed(this, 0)
             }
         }
         handler.post(runnable!!)

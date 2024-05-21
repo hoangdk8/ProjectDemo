@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.R
+import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.data.dataclass.DataItemType.Companion.ITEM_TYPE_ADVERTISE
 import com.example.projectdemo.data.dataclass.DataItemType.Companion.ITEM_TYPE_MUSIC
@@ -18,6 +18,7 @@ import com.example.projectdemo.listener.DetailPlayMusic
 import com.example.projectdemo.listener.PlayerEventListener
 import com.example.projectdemo.listener.eventbus.EventGoneView
 import com.example.projectdemo.listener.eventbus.EventHideMiniPlayDetailCategoties
+import com.example.projectdemo.listener.eventbus.EventShowMiniPlay
 import com.example.projectdemo.untils.convertDurationToTimeString
 import com.example.projectdemo.untils.eventBusPost
 import com.example.projectdemo.untils.eventBusRegister
@@ -42,9 +43,11 @@ class DetailCategoriesAdapter @Inject constructor(
     private var isProcess = false
     private var currentUrl = ""
     private val handler = Handler(Looper.getMainLooper())
+
     init {
         eventBusRegister()
     }
+
     inner class MusicViewHolder(private val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root), PlayerEventListener {
 
@@ -74,7 +77,7 @@ class DetailCategoriesAdapter @Inject constructor(
             binding.ctn.setOnClickListener {
                 currentUrl = ringTone.url!!
                 exoPlayerManager.setPlayerEventListener(this)
-                if (playingPosition!=position){
+                if (playingPosition != position) {
                     previousPlayingPosition = playingPosition
                     notifyItemChanged(previousPlayingPosition)
                     notifyItemChanged(playingPosition)
@@ -111,6 +114,7 @@ class DetailCategoriesAdapter @Inject constructor(
                 listener.onShowDetailsMusic(ringTone)
             }
         }
+
         @SuppressLint("NotifyDataSetChanged")
         override fun onPlaybackEnded() {
             playingPosition = RecyclerView.NO_POSITION
@@ -121,6 +125,7 @@ class DetailCategoriesAdapter @Inject constructor(
         }
 
         override fun onReadyPlay(ringTone: DataDefaultRings.RingTone) {
+            eventBusPost(EventShowMiniPlay())
             isLoading = false
             isPlay = true
             binding.loading.visibility = View.INVISIBLE

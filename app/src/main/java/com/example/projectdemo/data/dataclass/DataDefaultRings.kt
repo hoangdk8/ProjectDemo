@@ -46,7 +46,7 @@ data class DataDefaultRings(
         var isFavorite: Int?,
         @SerializedName("isDownload")
         var isDownload: Int?,
-        @SerializedName("colections")
-        var collections:Int?
+        @SerializedName("musicBanners")
+        var musicBanners: List<MusicBanner>?
     )
 }

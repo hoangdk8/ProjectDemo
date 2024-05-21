@@ -1,3 +1,5 @@
 package com.example.projectdemo.listener.eventbus
 
-class EventNextMusic ()
+import com.example.projectdemo.data.dataclass.DataDefaultRings
+
+class EventNextMusic (val ringTone: DataDefaultRings.RingTone)

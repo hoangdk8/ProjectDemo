@@ -1,12 +1,10 @@
 package com.example.projectdemo.ui.home.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.projectdemo.R
-import com.example.projectdemo.data.dataclass.AD
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.data.dataclass.DataItem
 import com.example.projectdemo.data.dataclass.DataItemType
@@ -21,8 +19,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val repository: HomeRepository,
 ) : ViewModel() {
-    private val _itemList = MutableLiveData<List<DataItem>>()
-    val itemList: LiveData<List<DataItem>> = _itemList
+    private val _itemList = MutableLiveData<List<DataDefaultRings.RingTone>>()
+    val itemList: LiveData<List<DataDefaultRings.RingTone>> = _itemList
 
     private val _itemListFilter = MutableLiveData<List<DataDefaultRings.RingTone>>()
     val itemListFilter: LiveData<List<DataDefaultRings.RingTone>> = _itemListFilter
@@ -40,11 +38,26 @@ class HomeViewModel @Inject constructor(
         musicTopList.add(MusicBanner("[SBS] 낭만닥터 김사부 OST", R.drawable.image2))
         musicTopList.add(MusicBanner("더 글로리 OST", R.drawable.image3))
 
-        val dataList = mutableListOf<DataItem>()
-        dataList.add(DataItem(DataItemType.ITEM_TYPE_BANNER, musicTopList))
+        val dataList = mutableListOf<DataDefaultRings.RingTone>()
+        dataList.add(
+            DataDefaultRings.RingTone(
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                musicTopList
+            )
+        )
         _itemList.value = dataList
     }
-
 
 
     fun getItemsFilter(page: Int) {
@@ -70,17 +83,28 @@ class HomeViewModel @Inject constructor(
                 val response = repository.getListSongDefault(page)
                 if (response.isSuccessful) {
                     response.body()?.let { listHomeModel ->
-                        val newDataItemList = mutableListOf<DataItem>()
+                        val newDataItemList = mutableListOf<DataDefaultRings.RingTone>()
                         listHomeModel.items.forEachIndexed { index, homeModel ->
                             if ((index + 1) % 5 == 0 && index > 0) {
                                 newDataItemList.add(
-                                    DataItem(
-                                        DataItemType.ITEM_TYPE_ADVERTISE,
-                                        AD(R.drawable.img_ad)
+                                    DataDefaultRings.RingTone(
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        1,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null
                                     )
                                 )
                             }
-                            newDataItemList.add(DataItem(DataItemType.ITEM_TYPE_MUSIC, homeModel))
+                            newDataItemList.add(homeModel)
                         }
 
                         val currentList = _itemList.value?.toMutableList() ?: mutableListOf()

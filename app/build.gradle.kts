@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.projectdemo"
-        minSdk = 24
+        minSdk = 22
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -91,4 +91,8 @@ dependencies {
 
     // Kotlin Extensions and Coroutines support for Room
     implementation ("androidx.room:room-ktx:2.6.1")
+
+    //workManager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
 }

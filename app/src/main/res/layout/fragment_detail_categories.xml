@@ -42,7 +42,6 @@
                     android:layout_height="@dimen/_200dp"
                     android:layout_marginTop="25dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/img_12"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

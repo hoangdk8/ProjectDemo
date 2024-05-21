@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 
     <application
         android:name=".ui.MyApplication"
@@ -15,9 +21,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjectDemo"
         tools:targetApi="31">
-        <activity
-            android:name=".ui.TestActivity"
-            android:exported="false" />
         <activity
             android:name=".ui.SplashActivity"
             android:exported="true"
@@ -32,5 +35,4 @@
             android:name=".ui.MainActivity"
             android:exported="false" />
     </application>
-
 </manifest>

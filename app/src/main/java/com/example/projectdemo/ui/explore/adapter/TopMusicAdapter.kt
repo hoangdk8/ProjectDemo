@@ -15,6 +15,7 @@ import com.example.projectdemo.listener.DetailPlayMusic
 import com.example.projectdemo.listener.PlayerEventListener
 import com.example.projectdemo.listener.eventbus.EventGoneView
 import com.example.projectdemo.listener.eventbus.EventHideMiniPlaySeeAll
+import com.example.projectdemo.listener.eventbus.EventShowMiniPlay
 import com.example.projectdemo.untils.convertDurationToTimeString
 import com.example.projectdemo.untils.eventBusPost
 import com.example.projectdemo.untils.eventBusRegister
@@ -78,7 +79,7 @@ class TopMusicAdapter @Inject constructor(
                     binding.progressBar.gone()
                 }
             }
-            binding.imgMusic.setOnClickListener {
+            binding.ctnMusic.setOnClickListener {
                 currentUrl = ringTone.url!!
                 exoPlayerManager.setPlayerEventListener(this)
                 if (playingPosition != position) {
@@ -129,6 +130,7 @@ class TopMusicAdapter @Inject constructor(
         }
 
         override fun onReadyPlay(ringTone: DataDefaultRings.RingTone) {
+            eventBusPost(EventShowMiniPlay())
             isLoading = false
             isPlay = true
             binding.loading.visibility = View.INVISIBLE
@@ -168,6 +170,7 @@ class TopMusicAdapter @Inject constructor(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Subscribe
     fun eventChangeIcon(event: EventHideMiniPlaySeeAll) {
         isPlay = false

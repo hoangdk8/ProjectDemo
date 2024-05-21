@@ -1,23 +1,37 @@
 package com.example.projectdemo.ui.detailplaymusic
 
+import android.Manifest
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.projectdemo.R
 import com.example.projectdemo.audio.ExoPlayerManager
+import com.example.projectdemo.data.dataclass.BASE_URL_MUSIC
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.databinding.FragmentDetailPlayMusicBinding
 import com.example.projectdemo.listener.PlayerEventListener
 import com.example.projectdemo.listener.eventbus.EventNotifyDataSetChanged
 import com.example.projectdemo.listener.eventbus.EventVisibleView
+import com.example.projectdemo.ui.home.view.HomeFragment
+import com.example.projectdemo.untils.downloadRingtone
 import com.example.projectdemo.untils.eventBusPost
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -29,11 +43,16 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
     lateinit var exoPlayerManager: ExoPlayerManager
     private lateinit var binding: FragmentDetailPlayMusicBinding
     private lateinit var exoPlayer: ExoPlayer
-    private lateinit var mediaItem: MediaItem
     private var isPlay = true
+    private var isStop = false
     private var isFavorite = false
     private var isDownload = false
     private val viewModel: DetailPlayMusicViewModel by viewModels()
+    private val PERMISSION_REQUEST_CODE = 123
+
+    companion object {
+        lateinit var animationProgress: ObjectAnimator
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -54,6 +73,7 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
         setupViews()
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun setupViews() {
         binding.imgBack.setOnClickListener {
             val fragmentManager = requireActivity().supportFragmentManager
@@ -65,7 +85,6 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
             eventBusPost(EventNotifyDataSetChanged())
             exoPlayerManager.stop()
         }
-
         val arguments = arguments
         val id = arguments?.getInt("id")
         val name = arguments?.getString("name")
@@ -77,7 +96,6 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
         val isVip = arguments?.getInt("isVip")
         val datatype = arguments?.getString("datatype")
         val online = arguments?.getBoolean("online")
-
         binding.txtTitle.text = name
         binding.imgPlay.setOnClickListener {
             isPlay = !isPlay
@@ -87,6 +105,10 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
             } else {
                 binding.imgPlay.setImageResource(R.drawable.ic_detail_play)
                 exoPlayerManager.pause()
+            }
+            if (isStop) {
+                exoPlayerManager.reload()
+                isStop = false
             }
         }
 
@@ -112,6 +134,8 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
 
                     1 -> {
                         isDownload = true
+                        binding.buttonDownload.setBackgroundResource(R.drawable.bg_button_undownload)
+                        binding.buttonDownload.isClickable = false
                     }
                 }
             }
@@ -130,7 +154,7 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
                         name,
                         url,
                         online,
-                        0, 0, 0
+                        0, 0, null
                     )
                 )
             }
@@ -156,16 +180,74 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
             }
         }
         binding.buttonDownload.setOnClickListener {
-            addMusicDb()
-            if (isDownload) {
-                Toast.makeText(requireActivity(), "Đã Download", Toast.LENGTH_SHORT).show()
-            } else {
-                lifecycleScope.launch {
-                    viewModel.updateDownloadStatus(id!!)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    addMusicDb()
+                    if (isDownload) {
+                        Toast.makeText(requireActivity(), "Đã Download", Toast.LENGTH_SHORT).show()
+                    } else {
+                        lifecycleScope.launch {
+                            viewModel.updateDownloadStatus(id!!)
 
+                        }
+                        Toast.makeText(requireActivity(), "Download", Toast.LENGTH_SHORT).show()
+                        name?.let { it1 ->
+                            downloadRingtone(
+                                requireActivity(),
+                                BASE_URL_MUSIC + url,
+                                it1
+                            )
+                        }
+                        isDownload = true
+                    }
+                } else {
+                    val alertBuilder = AlertDialog.Builder(requireContext())
+                    alertBuilder.setCancelable(true)
+                    alertBuilder.setTitle("Yêu cầu cấp quyền truy cập")
+                    alertBuilder.setMessage("Bạn ần cấp quyền truy cập để có thể tải nhạc chuông.")
+                    alertBuilder.setPositiveButton(android.R.string.yes) { _, _ ->
+                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                        intent.data =
+                            Uri.parse("package:${requireActivity().applicationContext.packageName}")
+                        startActivity(intent)
+                    }
+                    alertBuilder.setNegativeButton(android.R.string.no) { _, _ ->
+                    }
+                    val alert = alertBuilder.create()
+                    alert.show()
                 }
-                Toast.makeText(requireActivity(), "Download", Toast.LENGTH_SHORT).show()
-                isDownload = true
+            } else {
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    addMusicDb()
+                    if (isDownload) {
+                        Toast.makeText(requireActivity(), "Đã Download", Toast.LENGTH_SHORT).show()
+                    } else {
+                        lifecycleScope.launch {
+                            viewModel.updateDownloadStatus(id!!)
+
+                        }
+                        Toast.makeText(requireActivity(), "Download", Toast.LENGTH_SHORT).show()
+                        name?.let { it1 ->
+                            downloadRingtone(
+                                requireActivity(),
+                                BASE_URL_MUSIC + url,
+                                it1
+                            )
+                        }
+                        isDownload = true
+                    }
+                } else {
+                    // Quyền chưa được cấp, yêu cầu người dùng cấp quyền
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        PERMISSION_REQUEST_CODE
+                    )
+                }
             }
         }
     }
@@ -176,6 +258,8 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
     }
 
     override fun onPlaybackEnded() {
+        isStop = true
+        isPlay = false
     }
 
     override fun onReadyPlay(ringTone: DataDefaultRings.RingTone) {
@@ -185,11 +269,15 @@ class DetailPlayMusicFragment : Fragment(), PlayerEventListener {
     }
 
     override fun onPlay() {
+        binding.imgPlay.setImageResource(R.drawable.ic_pause_detail)
     }
 
     override fun onStopMusic() {
+        binding.imgPlay.setImageResource(R.drawable.ic_detail_play)
     }
 
     override fun onProgress(duration: Long) {
+        binding.progressPlay.max = exoPlayerManager.getPlayer().duration.toInt()
+        binding.progressPlay.progress = duration.toInt()
     }
 }

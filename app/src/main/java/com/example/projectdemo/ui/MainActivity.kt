@@ -1,19 +1,28 @@
 package com.example.projectdemo.ui
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
-import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.R
+import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.databinding.ActivityMainBinding
 import com.example.projectdemo.listener.eventbus.EventGoneView
 import com.example.projectdemo.listener.eventbus.EventShowMiniPlay
 import com.example.projectdemo.listener.eventbus.EventVisibleView
 import com.example.projectdemo.ui.home.adapter.MyPagerAdapter
+import com.example.projectdemo.untils.NotifyWorker
 import com.example.projectdemo.untils.eventBusRegister
 import com.example.projectdemo.untils.eventBusUnRegister
 import com.example.projectdemo.untils.gone
+import com.example.projectdemo.untils.showPermissionDialog
 import com.example.projectdemo.untils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.Subscribe
@@ -28,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var miniPlay: MiniPlay
     private var oldItem = 0
+    private val PERMISSION_REQUEST_CODE = 99
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -36,6 +46,36 @@ class MainActivity : AppCompatActivity() {
         setupViews()
         eventBusRegister()
         miniPlay = MiniPlay(binding.ctnPlayMusic, exoPlayerManager)
+        checkPermission()
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            when (resultCode) {
+                Activity.RESULT_CANCELED -> {
+                    checkPermission()
+                }
+            }
+        }
+    }
+
+    private fun checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                PERMISSION_REQUEST_CODE
+            )
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                showPermissionDialog(this)
+            }
+        }
     }
 
     private fun setupViews() {
@@ -47,10 +87,12 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.visibility = View.GONE
         binding.ctnPlayMusic.root.gone()
     }
+
     @Subscribe
     fun showView(event: EventShowMiniPlay) {
         binding.ctnPlayMusic.root.visible()
     }
+
     @Subscribe
     fun visibleView(event: EventVisibleView) {
         binding.bottomNavigation.visibility = View.VISIBLE
@@ -59,6 +101,16 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         eventBusUnRegister()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        NotifyWorker.cancelWork(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        NotifyWorker.notifyWork(this)
     }
 
     private fun setViewPager() {

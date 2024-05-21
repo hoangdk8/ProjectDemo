@@ -2,22 +2,16 @@ package com.example.projectdemo.ui.home.adapter
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.R
 import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.data.dataclass.DataDefaultRings
-import com.example.projectdemo.data.dataclass.DataItem
 import com.example.projectdemo.data.dataclass.DataItemType.Companion.ITEM_TYPE_ADVERTISE
+import com.example.projectdemo.data.dataclass.DataItemType.Companion.ITEM_TYPE_BANNER
 import com.example.projectdemo.data.dataclass.DataItemType.Companion.ITEM_TYPE_LOADING
-import com.example.projectdemo.data.dataclass.DataItemType.Companion.ITEM_TYPE_MUSIC
-import com.example.projectdemo.data.dataclass.MusicBanner
 import com.example.projectdemo.databinding.EachItemBinding
 import com.example.projectdemo.databinding.ItemAdBinding
 import com.example.projectdemo.databinding.ItemLoadingBinding
@@ -41,7 +35,7 @@ import javax.inject.Inject
 
 
 class HomeAdapter @Inject constructor(
-    private var itemList: List<DataItem>,
+    private var itemList: List<DataDefaultRings.RingTone>,
     private val exoPlayerManager: ExoPlayerManager,
     private val listener: DetailPlayMusic
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -55,8 +49,7 @@ class HomeAdapter @Inject constructor(
     private var isReload = false
     private var isProcess = false
     private var currentUrl = ""
-    private var nextUrl: DataDefaultRings.RingTone? = null
-    private val handler = Handler(Looper.getMainLooper())
+    private var nextRingTone: DataDefaultRings.RingTone? = null
 
     companion object {
         lateinit var animationProgress: ObjectAnimator
@@ -71,14 +64,13 @@ class HomeAdapter @Inject constructor(
         RecyclerView.ViewHolder(binding.root), PlayerEventListener {
 
 
-        @RequiresApi(Build.VERSION_CODES.O)
-        @SuppressLint("SetTextI18n")
+        @SuppressLint("SetTextI18n", "DefaultLocale")
         fun bindMusicView(homeRingtonesModel: DataDefaultRings.RingTone, position: Int) {
             val result = convertDurationToTimeString(homeRingtonesModel.duration!!)
             hour = result[0]
             minute = result[1]
             binding.tvTitle.text = homeRingtonesModel.name
-            binding.tvTime.text = "$hour:$minute"
+            binding.tvTime.text = String.format("%02d:%02d", hour.toInt(), minute.toInt())
             if (playingPosition == position && isPlay) {
                 val currentDuration = binding.progressBar.progress
                 binding.imgStatus.setImageResource(R.drawable.ic_pause)
@@ -86,12 +78,16 @@ class HomeAdapter @Inject constructor(
                 binding.imgStatus.visible()
                 binding.progressBar.progress = currentDuration
             } else if (playingPosition == position && isNext) {
-                val currentDuration = binding.progressBar.progress
-                binding.imgStatus.setImageResource(R.drawable.ic_pause)
+                exoPlayerManager.setPlayerEventListener(this)
                 binding.progressBar.visible()
                 binding.imgStatus.visible()
-                animationProgress.start()
-                binding.progressBar.progress = currentDuration
+                if (isPlay) {
+                    animationProgress.resume()
+                    binding.imgStatus.setImageResource(R.drawable.ic_pause)
+                } else {
+                    animationProgress.pause()
+                    binding.imgStatus.setImageResource(R.drawable.ic_play)
+                }
             } else {
                 binding.imgStatus.setImageResource(R.drawable.ic_play)
                 binding.imgStatus.visible()
@@ -107,9 +103,7 @@ class HomeAdapter @Inject constructor(
             }
             binding.imgMusic.setOnClickListener {
 
-                if (itemList[position].viewType == ITEM_TYPE_MUSIC) {
-                    currentUrl = homeRingtonesModel.url!!
-                }
+                currentUrl = homeRingtonesModel.url!!
                 exoPlayerManager.setPlayerEventListener(this)
                 if (playingPosition != position) {
                     previousPlayingPosition = playingPosition
@@ -169,7 +163,22 @@ class HomeAdapter @Inject constructor(
         @SuppressLint("NotifyDataSetChanged")
         override fun onPlaybackEnded() {
             animationProgress.cancel()
-            eventBusPost(EventNextMusic())
+            playingPosition += 1
+            notifyDataSetChanged()
+            if (itemList[playingPosition].id != ITEM_TYPE_ADVERTISE && itemList[playingPosition].id != ITEM_TYPE_BANNER) {
+                nextRingTone = itemList[playingPosition]
+                exoPlayerManager.playPrepare(nextRingTone!!)
+                isPlay = true
+                isProcess = true
+            } else {
+                playingPosition += 1
+                nextRingTone = itemList[playingPosition]
+                exoPlayerManager.playPrepare(nextRingTone!!)
+                isPlay = true
+                isProcess = true
+            }
+            isNext = true
+            nextRingTone?.let { EventNextMusic(it) }?.let { eventBusPost(it) }
         }
 
         override fun onReadyPlay(ringTone: DataDefaultRings.RingTone) {
@@ -211,7 +220,6 @@ class HomeAdapter @Inject constructor(
             binding.imgStatus.setImageResource(R.drawable.ic_play)
             isPlay = false
             isProcess = true
-            animationProgress.pause()
         }
 
         override fun onProgress(duration: Long) {
@@ -223,21 +231,7 @@ class HomeAdapter @Inject constructor(
     @SuppressLint("NotifyDataSetChanged")
     @Subscribe
     fun eventNextMusic(event: EventNextMusic) {
-        playingPosition += 1
-        if (itemList[playingPosition].viewType == ITEM_TYPE_MUSIC) {
-            nextUrl = itemList[playingPosition].bannerList!!
-            exoPlayerManager.playPrepare(nextUrl!!)
-            isPlay = true
-            isProcess = true
-        } else {
-            playingPosition += 1
-            nextUrl = itemList[playingPosition].bannerList!!
-            exoPlayerManager.playPrepare(nextUrl!!)
-            isPlay = true
-            isProcess = true
-        }
-        isNext = true
-        notifyDataSetChanged()
+        notifyItemChanged(itemList.indexOf(event.ringTone))
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -245,6 +239,7 @@ class HomeAdapter @Inject constructor(
     fun eventChangeIcon(event: EventHideMiniPlay) {
         isPlay = false
         playingPosition = RecyclerView.NO_POSITION
+        animationProgress.cancel()
         notifyDataSetChanged()
     }
 
@@ -288,25 +283,26 @@ class HomeAdapter @Inject constructor(
                 LoadingViewHolder(binding)
             }
 
-            else -> {
+            R.layout.each_item -> {
                 val binding =
                     EachItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 HorizontalViewHolder(binding)
             }
+
+            else -> throw IllegalStateException("Invalid")
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MusicViewHolder -> {
-                itemList[position].bannerList.let {
-                    holder.bindMusicView(it as DataDefaultRings.RingTone, position)
+                itemList[position].let {
+                    holder.bindMusicView(it, position)
                 }
             }
 
             is HorizontalViewHolder -> {
-                itemList[position].recyclerItemList.let { holder.bind(it as List<MusicBanner>) }
+                itemList[0].musicBanners?.let { holder.bind(it) }
             }
 
             is AdversiteViewHolder -> {}
@@ -320,11 +316,12 @@ class HomeAdapter @Inject constructor(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (itemList[position].viewType) {
-            ITEM_TYPE_MUSIC -> R.layout.item_playlist
+        return when (itemList[position].id) {
+            ITEM_TYPE_BANNER -> R.layout.each_item
             ITEM_TYPE_LOADING -> R.layout.item_loading
             ITEM_TYPE_ADVERTISE -> R.layout.item_ad
-            else -> R.layout.each_item
+            else -> R.layout.item_playlist
+
         }
     }
 

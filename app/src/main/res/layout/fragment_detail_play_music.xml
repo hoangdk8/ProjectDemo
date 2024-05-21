@@ -96,6 +96,20 @@
         app:layout_constraintEnd_toStartOf="@id/img_next"
         app:layout_constraintStart_toEndOf="@id/img_previous" />
 
+    <ProgressBar
+        android:id="@+id/progress_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.8"
+        android:indeterminateOnly="false"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        android:scaleX="2"
+        android:scaleY="2"
+        app:layout_constraintBottom_toBottomOf="@+id/img_play"
+        app:layout_constraintEnd_toEndOf="@+id/img_play"
+        app:layout_constraintStart_toStartOf="@+id/img_play"
+        app:layout_constraintTop_toTopOf="@+id/img_play" />
+
     <ImageView
         android:id="@+id/img_next"
         android:layout_width="wrap_content"
