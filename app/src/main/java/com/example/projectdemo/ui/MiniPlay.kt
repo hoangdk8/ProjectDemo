@@ -86,5 +86,12 @@ class MiniPlay(
         binding.txtTimeCurrent.text = "$minute:$second"
     }
 
+    override fun onNext(listRingTone: List<DataDefaultRings.RingTone>, position: Int) {
+    }
+
+    override fun onError() {
+        exoPlayerManager.next()
+    }
+
 
 }

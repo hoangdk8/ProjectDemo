@@ -8,4 +8,13 @@
     <string name="txt_banner_1">[KBS] 오아시스 OST</string>
     <string name="txt_banner_2">[SBS] 낭만닥터 김사부 OST</string>
     <string name="txt_banner_3">더 글로리 OST</string>
+    <string name="recent_search">Recent Search</string>
+    <string name="top_results">Top Results</string>
+    <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="banner_id">ca-app-pub-3940256099942544/9214589741</string>
+    <string name="rewarded_id">ca-app-pub-3940256099942544/5224354917</string>
+    <string name="native_id">ca-app-pub-3940256099942544/2247696110</string>
+    <string name="open_app_id">ca-app-pub-3940256099942544/9257395921</string>
+    <string name="inter_id">ca-app-pub-3940256099942544/8691691433</string>
+
 </resources>

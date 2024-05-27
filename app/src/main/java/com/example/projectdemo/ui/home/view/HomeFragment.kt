@@ -14,13 +14,12 @@ import androidx.lifecycle.Observer
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.R
+import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.data.dataclass.DataDefaultRings
 import com.example.projectdemo.databinding.FragmentHomeBinding
 import com.example.projectdemo.listener.DetailPlayMusic
 import com.example.projectdemo.listener.eventbus.EventGoneView
-import com.example.projectdemo.listener.eventbus.EventPlayDetailMusic
 import com.example.projectdemo.listener.eventbus.EventRefreshHome
 import com.example.projectdemo.ui.detailplaymusic.DetailPlayMusicFragment
 import com.example.projectdemo.ui.home.adapter.HomeAdapter
@@ -69,8 +68,7 @@ class HomeFragment : Fragment(), DetailPlayMusic {
         binding.mainRecyclerView.setHasFixedSize(true)
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         viewModel.itemList.observe(requireActivity(), Observer { it ->
-            adapter = HomeAdapter(it, exoPlayerManager, this)
-
+            adapter = HomeAdapter(requireContext(),it, exoPlayerManager, this)
             adapter.notifyDataSetChanged()
             val layoutManager = binding.mainRecyclerView.layoutManager as LinearLayoutManager
             val lastVisiblePosition = layoutManager.findFirstVisibleItemPosition()
@@ -96,10 +94,6 @@ class HomeFragment : Fragment(), DetailPlayMusic {
         })
     }
 
-    @Subscribe
-    fun eventDetailPlay(event: EventPlayDetailMusic) {
-
-    }
 
     @Subscribe
     fun onEvent(event: EventRefreshHome) {
@@ -132,12 +126,19 @@ class HomeFragment : Fragment(), DetailPlayMusic {
             putBoolean("online", ringTone.online == true)
         }
         val fragment = DetailPlayMusicFragment()
+
         fragment.arguments = bundle
-        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.setCustomAnimations(R.anim.anim_left_in, R.anim.anim_left_out)
-        fragmentTransaction.replace(R.id.fragment_container, fragment)
-        fragmentTransaction.commit()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.anim_left_in,
+                R.anim.anim_left_out,
+                R.anim.anim_left_in,
+                R.anim.anim_left_out
+            )
+            .replace(R.id.fragment_container_view, fragment)
+            .addToBackStack(null)
+            .commit()
+
 //        val layoutManager = binding.mainRecyclerView.layoutManager as LinearLayoutManager
 //            layoutManager.scrollToPosition(0)
     }

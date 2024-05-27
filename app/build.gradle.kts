@@ -56,6 +56,7 @@ dependencies {
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     implementation("androidx.compose.ui:ui-desktop:1.6.7")
     implementation("androidx.media3:media3-common:1.3.1")
+    implementation("androidx.lifecycle:lifecycle-process:2.8.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -64,35 +65,38 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.google.dagger:hilt-android:2.48.1")
     kapt("com.google.dagger:hilt-compiler:2.48.1")
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation ("androidx.activity:activity-ktx:1.8.2")
-    implementation ("androidx.fragment:fragment-ktx:1.6.2")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.activity:activity-ktx:1.8.2")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
     implementation("androidx.media3:media3-session:1.3.1")
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")
     implementation("androidx.media3:media3-datasource-okhttp:1.3.1")
     //eventbus
-    implementation ("org.greenrobot:eventbus:3.3.1")
+    implementation("org.greenrobot:eventbus:3.3.1")
 
     implementation("com.jakewharton.timber:timber:4.7.1")
 
     //lottiefiles
-    implementation ("com.airbnb.android:lottie:6.3.0")
+    implementation("com.airbnb.android:lottie:6.3.0")
 
     // Room
-    implementation ("androidx.room:room-runtime:2.6.1")
-    kapt ("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 
     // Kotlin Extensions and Coroutines support for Room
-    implementation ("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     //workManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
-
+    //ad
+    implementation("com.google.android.gms:play-services-ads:23.1.0")
+    //gif
+    implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.28")
 }

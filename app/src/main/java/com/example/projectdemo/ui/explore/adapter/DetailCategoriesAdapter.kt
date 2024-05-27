@@ -51,6 +51,7 @@ class DetailCategoriesAdapter @Inject constructor(
     inner class MusicViewHolder(private val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root), PlayerEventListener {
 
+        @SuppressLint("SetTextI18n")
         fun bindMusicView(ringTone: DataDefaultRings.RingTone, position: Int) {
             val result = convertDurationToTimeString(ringTone.duration!!)
             hour = result[0]
@@ -112,6 +113,7 @@ class DetailCategoriesAdapter @Inject constructor(
             binding.ctnMusic.setOnClickListener {
                 eventBusPost(EventGoneView())
                 listener.onShowDetailsMusic(ringTone)
+                exoPlayerManager.playList(itemList as List<DataDefaultRings.RingTone>,ringTone)
             }
         }
 
@@ -162,6 +164,12 @@ class DetailCategoriesAdapter @Inject constructor(
 
         override fun onProgress(duration: Long) {
 
+        }
+
+        override fun onNext(listRingTone: List<DataDefaultRings.RingTone>, position: Int) {
+        }
+
+        override fun onError() {
         }
     }
 

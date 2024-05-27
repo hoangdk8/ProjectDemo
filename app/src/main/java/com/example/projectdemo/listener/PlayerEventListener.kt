@@ -9,4 +9,6 @@ interface PlayerEventListener {
     fun onPlay()
     fun onStopMusic()
     fun onProgress(duration: Long)
+    fun onNext(listRingTone: List<DataDefaultRings.RingTone>,position: Int)
+    fun onError()
 }

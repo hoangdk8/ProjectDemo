@@ -2,6 +2,7 @@ package com.example.projectdemo.ui.home.adapter
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,12 +30,20 @@ import com.example.projectdemo.untils.eventBusRegister
 import com.example.projectdemo.untils.eventBusUnRegister
 import com.example.projectdemo.untils.gone
 import com.example.projectdemo.untils.logd
+import com.example.projectdemo.untils.setSafeOnClickListener
 import com.example.projectdemo.untils.visible
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdLoader
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdOptions
 import org.greenrobot.eventbus.Subscribe
 import javax.inject.Inject
 
 
 class HomeAdapter @Inject constructor(
+    private val context: Context,
     private var itemList: List<DataDefaultRings.RingTone>,
     private val exoPlayerManager: ExoPlayerManager,
     private val listener: DetailPlayMusic
@@ -50,20 +59,64 @@ class HomeAdapter @Inject constructor(
     private var isProcess = false
     private var currentUrl = ""
     private var nextRingTone: DataDefaultRings.RingTone? = null
+    private var nativeAd : NativeAd? = null
+    private var isAdLoaded = false
 
     companion object {
         lateinit var animationProgress: ObjectAnimator
     }
 
-    init {
-        eventBusRegister()
+    fun filterList(filterlist: ArrayList<DataDefaultRings.RingTone>) {
+        itemList = filterlist
+        notifyDataSetChanged()
     }
 
+    init {
+        eventBusRegister()
+        loadAds()
+    }
+    @SuppressLint("NotifyDataSetChanged")
+    private fun loadAds() {
+        val adLoader = AdLoader.Builder(
+            context,
+            "ca-app-pub-3940256099942544/2247696110"
+        ).forNativeAd { nativeAD ->
+            nativeAd = nativeAD
+            isAdLoaded = true
+            notifyDataSetChanged()
+        }.withAdListener(object : AdListener() {
+
+        }).withNativeAdOptions(NativeAdOptions.Builder().build()).build()
+
+        adLoader.loadAd(AdRequest.Builder().build())
+    }
+    inner class AdversiteViewHolder(val binding: ItemAdBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bindNativeAd(ad: NativeAd) {
+            binding.root.visibility = View.GONE
+            with(binding) {
+                adAppIcon.setImageDrawable(ad.icon?.drawable)
+                txtAppName.text = ad.headline
+                adStar.rating = ad.starRating?.toFloat() ?: 0f
+                adMedia.mediaContent = ad.mediaContent
+                adCallToAction.text = ad.callToAction
+
+                root.headlineView = txtAppName
+                root.iconView = adAppIcon
+                root.starRatingView = adStar
+                root.mediaView = adMedia
+                root.callToActionView = adCallToAction
+
+                root.setNativeAd(ad)
+                root.visibility = View.VISIBLE
+            }
+        }
+
+    }
 
     inner class MusicViewHolder(val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root), PlayerEventListener {
-
-
         @SuppressLint("SetTextI18n", "DefaultLocale")
         fun bindMusicView(homeRingtonesModel: DataDefaultRings.RingTone, position: Int) {
             val result = convertDurationToTimeString(homeRingtonesModel.duration!!)
@@ -101,7 +154,7 @@ class HomeAdapter @Inject constructor(
                     binding.progressBar.gone()
                 }
             }
-            binding.imgMusic.setOnClickListener {
+            binding.imgMusic.setSafeOnClickListener {
 
                 currentUrl = homeRingtonesModel.url!!
                 exoPlayerManager.setPlayerEventListener(this)
@@ -137,7 +190,7 @@ class HomeAdapter @Inject constructor(
                 }
 
             }
-            binding.ctnMusic.setOnClickListener {
+            binding.ctnMusic.setSafeOnClickListener {
                 exoPlayerManager.stop()
                 notifyItemChanged(playingPosition)
                 playingPosition = RecyclerView.NO_POSITION
@@ -150,7 +203,7 @@ class HomeAdapter @Inject constructor(
                     }
 
                     else -> {
-                        exoPlayerManager.playPrepare(homeRingtonesModel)
+                        exoPlayerManager.playList(itemList, homeRingtonesModel)
                         playingPosition = position
                         isPlay = true
                         isProcess = true
@@ -226,6 +279,13 @@ class HomeAdapter @Inject constructor(
 
         }
 
+        override fun onNext(listRingTone: List<DataDefaultRings.RingTone>, position: Int) {
+
+        }
+
+        override fun onError() {
+        }
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -260,8 +320,6 @@ class HomeAdapter @Inject constructor(
     inner class LoadingViewHolder(private val binding: ItemLoadingBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    inner class AdversiteViewHolder(private val binding: ItemAdBinding) :
-        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -305,7 +363,13 @@ class HomeAdapter @Inject constructor(
                 itemList[0].musicBanners?.let { holder.bind(it) }
             }
 
-            is AdversiteViewHolder -> {}
+            is AdversiteViewHolder -> {
+                if (isAdLoaded) {
+                    nativeAd?.let { holder.bindNativeAd(it) }
+                } else {
+                    holder.itemView.visibility = View.GONE
+                }
+            }
 
             is LoadingViewHolder -> {}
         }

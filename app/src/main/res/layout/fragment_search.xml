@@ -3,16 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/ctn"
     android:layout_height="match_parent"
-    android:background="@drawable/home"
-    >
+    android:background="@drawable/home">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewSearch"
-        android:layout_width="285dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="16dp"
         app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/txtCancelSearch"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -22,21 +25,28 @@
 
             <EditText
                 android:id="@+id/editTextSearch"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:background="@null"
                 android:drawableStart="@drawable/ic_search_white"
+                android:drawablePadding="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Search ringtones"
+                android:imeOptions="actionSearch"
                 android:maxLines="1"
+                android:paddingVertical="10dp"
+                android:paddingStart="10dp"
                 android:singleLine="true"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="10dp" />
+                app:layout_constraintEnd_toStartOf="@+id/imageView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
+                android:visibility="visible"
                 android:src="@drawable/ic_close_search"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -50,31 +60,15 @@
         android:id="@+id/txtCancelSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16sp"
         android:fontFamily="@font/bevietnampro_regular"
-        android:gravity="center_horizontal"
         android:text="Hủy"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:visibility="visible"
-        app:layout_constraintStart_toEndOf="@id/cardViewSearch"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txtRecentSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/bevietnampro_bold"
-        android:text="Recent Search"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardViewSearch" />
-
+        app:layout_constraintBottom_toBottomOf="@+id/cardViewSearch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cardViewSearch" />
     <TextView
         android:id="@+id/txtTrending"
         android:layout_width="wrap_content"
@@ -89,13 +83,13 @@
         app:layout_constraintTop_toBottomOf="@id/cardViewSearch" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listTopTrending"
+        android:id="@+id/recycler_view_trending"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_marginTop="20dp"
+        android:layout_height="0dp"
         android:fontFamily="@font/bevietnampro_regular"
+        android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtTrending" />
+        app:layout_constraintTop_toBottomOf="@+id/txtTrending" />
 </androidx.constraintlayout.widget.ConstraintLayout>

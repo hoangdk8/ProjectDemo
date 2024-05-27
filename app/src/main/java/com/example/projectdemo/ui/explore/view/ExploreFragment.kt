@@ -73,11 +73,16 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,DetailPlayMusic {
             }
             val fragment = FragmentSeeAll()
             fragment.arguments = bundle
-            val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.setCustomAnimations(R.anim.anim_left_in,R.anim.anim_left_out)
-            fragmentTransaction.replace(R.id.fragment_container_view, fragment)
-            fragmentTransaction.commit()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.anim_left_in,
+                    R.anim.anim_left_out,
+                    R.anim.anim_left_in,
+                    R.anim.anim_left_out
+                )
+                .replace(R.id.fragment_container_view, fragment)
+                .addToBackStack(null)
+                .commit()
         }
         binding.seeAllTopTrending.setOnClickListener {
             val bundle = Bundle().apply {
@@ -86,11 +91,16 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,DetailPlayMusic {
             }
             val fragment = FragmentSeeAll()
             fragment.arguments = bundle
-            val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.setCustomAnimations(R.anim.anim_left_in,R.anim.anim_left_out)
-            fragmentTransaction.replace(R.id.fragment_container_view, fragment)
-            fragmentTransaction.commit()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.anim_left_in,
+                    R.anim.anim_left_out,
+                    R.anim.anim_left_in,
+                    R.anim.anim_left_out
+                )
+                .replace(R.id.fragment_container_view, fragment)
+                .addToBackStack(null)
+                .commit()
         }
         binding.seeAllNewRingtone.setOnClickListener {
             val bundle = Bundle().apply {
@@ -99,11 +109,16 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,DetailPlayMusic {
             }
             val fragment = FragmentSeeAll()
             fragment.arguments = bundle
-            val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.setCustomAnimations(R.anim.anim_left_in,R.anim.anim_left_out)
-            fragmentTransaction.replace(R.id.fragment_container_view, fragment)
-            fragmentTransaction.commit()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.anim_left_in,
+                    R.anim.anim_left_out,
+                    R.anim.anim_left_in,
+                    R.anim.anim_left_out
+                )
+                .replace(R.id.fragment_container_view, fragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 
@@ -167,11 +182,16 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,DetailPlayMusic {
         }
         val fragment = DetailCategoriesFragment()
         fragment.arguments = bundle
-        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.setCustomAnimations(R.anim.anim_left_in,R.anim.anim_left_out)
-        fragmentTransaction.replace(R.id.fragment_container_view, fragment)
-        fragmentTransaction.commit()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.anim_left_in,
+                R.anim.anim_left_out,
+                R.anim.anim_left_in,
+                R.anim.anim_left_out
+            )
+            .replace(R.id.fragment_container_view, fragment)
+            .addToBackStack(null)
+            .commit()
     }
     @Subscribe
     fun onEvent(event: EventRefreshExplore) {
@@ -201,10 +221,15 @@ class ExploreFragment : Fragment(), OnClickCategoriesListener,DetailPlayMusic {
         }
         val fragment = DetailPlayMusicFragment()
         fragment.arguments = bundle
-        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.setCustomAnimations(R.anim.anim_left_in, R.anim.anim_left_out)
-        fragmentTransaction.replace(R.id.fragment_container, fragment)
-        fragmentTransaction.commit()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.anim_left_in,
+                R.anim.anim_left_out,
+                R.anim.anim_left_in,
+                R.anim.anim_left_out
+            )
+            .replace(R.id.fragment_container_view, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

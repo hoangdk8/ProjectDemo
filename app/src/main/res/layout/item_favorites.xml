@@ -8,13 +8,13 @@
     android:orientation="horizontal"
     android:paddingHorizontal="16dp"
     android:paddingVertical="8dp">
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ctn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ctn_music"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/img_music"
@@ -26,28 +26,54 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/img_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_play"
-            app:layout_constraintTop_toTopOf="@id/img_music"
-            app:layout_constraintStart_toStartOf="@id/img_music"
-            app:layout_constraintEnd_toEndOf="@id/img_music"
             app:layout_constraintBottom_toBottomOf="@id/img_music"
-            />
+            app:layout_constraintEnd_toEndOf="@id/img_music"
+            app:layout_constraintStart_toStartOf="@id/img_music"
+            app:layout_constraintTop_toTopOf="@id/img_music" />
+
+        <ProgressBar
+            android:id="@+id/loading"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:indeterminateTint="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/img_status"
+            app:layout_constraintEnd_toEndOf="@id/img_status"
+            app:layout_constraintStart_toStartOf="@id/img_status"
+            app:layout_constraintTop_toTopOf="@id/img_status" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="5dp"
+        android:layout_marginStart="-5dp"
+        android:progressBackgroundTint="#B1B0AD"
+        android:progressDrawable="@drawable/bg_progressbar"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/ctn"
+        app:layout_constraintEnd_toEndOf="@+id/ctn_music"
+        app:layout_constraintStart_toStartOf="@+id/ctn_music"
+        app:layout_constraintTop_toTopOf="@+id/ctn" />
 
     <LinearLayout
+        android:id="@id/ctn_music"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/ctn_music"
+        app:layout_constraintBottom_toBottomOf="@id/ctn"
         app:layout_constraintEnd_toStartOf="@+id/img_heart"
-        app:layout_constraintStart_toEndOf="@id/ctn_music"
-        app:layout_constraintTop_toTopOf="@id/ctn_music">
+        app:layout_constraintStart_toEndOf="@id/ctn"
+        app:layout_constraintTop_toTopOf="@id/ctn">
 
         <TextView
             android:id="@+id/txt_title"

@@ -4,7 +4,7 @@
     <item>
         <shape
             android:shape="ring"
-            android:thicknessRatio="80"
+            android:thickness="1dp"
             android:useLevel="false">
         </shape>
     </item>
@@ -14,13 +14,14 @@
             android:toDegrees="270">
             <shape
                 android:shape="ring"
-                android:thicknessRatio="80"
+                android:thickness="1dp"
                 android:useLevel="true">
+                <size android:width="1dp" />
                 <gradient
                     android:endColor="@color/black"
                     android:startColor="@color/black"
-                    android:type="sweep" />
-
+                    android:type="sweep"
+                    android:useLevel="true"/>
             </shape>
         </rotate>
     </item>

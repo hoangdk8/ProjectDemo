@@ -6,6 +6,8 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projectdemo.audio.ExoPlayerManager
 import com.example.projectdemo.R
@@ -25,7 +27,7 @@ import com.example.projectdemo.untils.visible
 import org.greenrobot.eventbus.Subscribe
 import javax.inject.Inject
 
-class TopMusicAdapter @Inject constructor(
+class TopMusicAdapter @OptIn(UnstableApi::class) @Inject constructor(
     private val topDown: List<DataDefaultRings.RingTone>,
     private val exoPlayerManager: ExoPlayerManager,
     private val listener: DetailPlayMusic
@@ -48,7 +50,7 @@ class TopMusicAdapter @Inject constructor(
 
     inner class TopDownViewHolder(private val binding: ItemTopBinding) :
         RecyclerView.ViewHolder(binding.root), PlayerEventListener {
-        @SuppressLint("SetTextI18n")
+        @UnstableApi @SuppressLint("SetTextI18n")
         fun bindTopDown(ringTone: DataDefaultRings.RingTone, position: Int) {
             val result = convertDurationToTimeString(ringTone.duration!!)
             hour = result[0]
@@ -117,6 +119,7 @@ class TopMusicAdapter @Inject constructor(
             binding.linearLayout.setOnClickListener {
                 eventBusPost(EventGoneView())
                 listener.onShowDetailsMusic(ringTone)
+                exoPlayerManager.playList(topDown,ringTone)
             }
         }
 
@@ -129,7 +132,7 @@ class TopMusicAdapter @Inject constructor(
             isProcess = false
         }
 
-        override fun onReadyPlay(ringTone: DataDefaultRings.RingTone) {
+        @UnstableApi override fun onReadyPlay(ringTone: DataDefaultRings.RingTone) {
             eventBusPost(EventShowMiniPlay())
             isLoading = false
             isPlay = true
@@ -168,6 +171,12 @@ class TopMusicAdapter @Inject constructor(
         override fun onProgress(duration: Long) {
 
         }
+
+        override fun onNext(listRingTone: List<DataDefaultRings.RingTone>, position: Int) {
+        }
+
+        override fun onError() {
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -190,7 +199,7 @@ class TopMusicAdapter @Inject constructor(
         return topDown.size
     }
 
-    override fun onBindViewHolder(holder: TopDownViewHolder, position: Int) {
+    @UnstableApi override fun onBindViewHolder(holder: TopDownViewHolder, position: Int) {
         holder.bindTopDown(topDown[position], position)
     }
 

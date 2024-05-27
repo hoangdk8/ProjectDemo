@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -24,6 +23,8 @@ import com.example.projectdemo.untils.eventBusUnRegister
 import com.example.projectdemo.untils.gone
 import com.example.projectdemo.untils.showPermissionDialog
 import com.example.projectdemo.untils.visible
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.Subscribe
 import javax.inject.Inject
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private var oldItem = 0
     private val PERMISSION_REQUEST_CODE = 99
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -47,6 +49,9 @@ class MainActivity : AppCompatActivity() {
         eventBusRegister()
         miniPlay = MiniPlay(binding.ctnPlayMusic, exoPlayerManager)
         checkPermission()
+        MobileAds.initialize(this) {}
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
 
     }
 
@@ -91,6 +96,7 @@ class MainActivity : AppCompatActivity() {
     @Subscribe
     fun showView(event: EventShowMiniPlay) {
         binding.ctnPlayMusic.root.visible()
+
     }
 
     @Subscribe
@@ -170,4 +176,9 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        moveTaskToBack(true)
+    }
 }

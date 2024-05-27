@@ -1,10 +1,14 @@
 package com.example.projectdemo.audio
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.projectdemo.data.dataclass.BASE_URL_MUSIC
 import com.example.projectdemo.data.dataclass.DataDefaultRings
@@ -18,9 +22,11 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
     private val exoPlayer: ExoPlayer = ExoPlayer.Builder(context).build()
     private var playerEventListener: PlayerEventListener? = null
     private var playerEventListenerMain: PlayerEventListener? = null
-    private var currentModel : DataDefaultRings.RingTone? = null
+    private var currentModel: DataDefaultRings.RingTone? = null
     private val handler = Handler(Looper.getMainLooper())
     private var runnable: Runnable? = null
+    private var currentPosition: Int = 0
+    private var currentRingtone: List<DataDefaultRings.RingTone>? = null
 
 
     fun getPlayer(): ExoPlayer {
@@ -50,7 +56,11 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
             } else if (state == ExoPlayer.STATE_READY) {
                 playerEventListener?.onReadyPlay(currentModel!!)
                 playerEventListenerMain?.onReadyPlay(currentModel!!)
+
             }
+        }
+        override fun onPlayerError(error: PlaybackException) {
+            playerEventListener?.onError()
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -58,6 +68,7 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
             if (isPlaying) {
                 playerEventListener?.onPlay()
                 playerEventListenerMain?.onPlay()
+                currentRingtone?.let { playerEventListener?.onNext(it,currentPosition) }
             } else {
                 handler.removeCallbacks(runnable!!)
                 playerEventListener?.onStopMusic()
@@ -65,8 +76,14 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
 
             }
         }
-    }
 
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            super.onMediaItemTransition(mediaItem, reason)
+            currentPosition = exoPlayer.currentMediaItemIndex
+            currentRingtone?.let { playerEventListener?.onNext(it,currentPosition) }
+        }
+
+    }
     init {
         exoPlayer.addListener(eventListener)
     }
@@ -88,6 +105,27 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
         currentModel = ringTone
     }
 
+    fun playList(
+        listRingTone: List<DataDefaultRings.RingTone>,
+        clickedRingTone: DataDefaultRings.RingTone
+    ) {
+        exoPlayer.clearMediaItems()
+        val filteredRingTones = listRingTone.filter { it.id != 0 && it.id != 1 }
+        val mediaItems = filteredRingTones.map { ringTone ->
+            MediaItem.fromUri(BASE_URL_MUSIC + ringTone.url)
+        }
+        exoPlayer.addMediaItems(mediaItems)
+
+        val startIndex = filteredRingTones.indexOf(clickedRingTone)
+        if (startIndex != -1) {
+            exoPlayer.seekTo(startIndex, 0)
+            exoPlayer.playWhenReady = true
+            exoPlayer.prepare()
+            currentModel = clickedRingTone
+        }
+        currentRingtone = filteredRingTones
+    }
+
     fun play() {
         exoPlayer.play()
     }
@@ -102,10 +140,18 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
     fun stop() {
         exoPlayer.stop()
     }
-
+    @SuppressLint("UnsafeOptInUsageError")
+    fun next() {
+        exoPlayer.next()
+    }
+    @SuppressLint("UnsafeOptInUsageError")
+    fun previous() {
+        exoPlayer.previous()
+    }
     fun release() {
         exoPlayer.release()
     }
+
     fun reload() {
         exoPlayer.seekTo(0)
         exoPlayer.play()

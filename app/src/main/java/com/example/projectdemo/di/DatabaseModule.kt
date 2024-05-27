@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.example.projectdemo.data.local.AppDatabase
 import com.example.projectdemo.data.local.MusicDao
+import com.example.projectdemo.data.local.RecentSearchDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,5 +25,9 @@ object DatabaseModule {
     @Provides
     fun provideArticleDao(db: AppDatabase): MusicDao{
         return db.musicDao()
+    }
+    @Provides
+    fun provideRecentDao(db: AppDatabase): RecentSearchDao{
+        return db.recentSearchDao()
     }
 }

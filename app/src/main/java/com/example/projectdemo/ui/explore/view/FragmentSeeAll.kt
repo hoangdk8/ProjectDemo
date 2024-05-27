@@ -66,11 +66,7 @@ class FragmentSeeAll : Fragment(),DetailPlayMusic {
     private fun setupViews() {
         itemList = mutableListOf()
         binding.icBack.setOnClickListener {
-            val fragmentManager = requireActivity().supportFragmentManager
-            val currentFragment = fragmentManager.findFragmentById(R.id.fragment_container_view)
-            if (currentFragment != null) {
-                fragmentManager.beginTransaction().remove(currentFragment).commit()
-            }
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         val arguments = arguments
         val homeType = arguments?.getString("HOME_TYPE")

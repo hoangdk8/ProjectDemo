@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.projectdemo.R
 import com.example.projectdemo.data.dataclass.DataDefaultRings
-import com.example.projectdemo.data.dataclass.DataItem
-import com.example.projectdemo.data.dataclass.DataItemType
 import com.example.projectdemo.data.dataclass.MusicBanner
 import com.example.projectdemo.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

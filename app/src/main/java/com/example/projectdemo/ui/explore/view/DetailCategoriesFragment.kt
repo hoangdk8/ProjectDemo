@@ -66,11 +66,7 @@ class DetailCategoriesFragment : Fragment(),DetailPlayMusic {
         (activity as? AppCompatActivity)?.setSupportActionBar(binding.toolbar)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener {
-            val fragmentManager = requireActivity().supportFragmentManager
-            val currentFragment = fragmentManager.findFragmentById(R.id.fragment_container_view)
-            if (currentFragment != null) {
-                fragmentManager.beginTransaction().remove(currentFragment).commit()
-            }
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         setupViews()
         exoPlayer = ExoPlayer.Builder(requireActivity()).build()
